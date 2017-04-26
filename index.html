@@ -1,0 +1,92 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LO07</title>
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <link rel="shortcut icon" href="images/favicon.png">
+
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="./include/css/material.min.css">
+    <link rel="stylesheet" href="./include/css/styles-demo.css">
+    <link rel="stylesheet" href="./css/styles.css">
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+      <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title pagemanager-title"></span>
+        </div>
+      </header>
+      <div class="demo-drawer mdl-layout__drawer mdl-color--indigo-700 mdl-color-text--grey-50 mdl-shadow--8dp">
+        <header class="demo-drawer-header">
+          <div class="lo07-title">LO07</div>
+          <div class="lo07-subtitle">Gestion des cursus</div>
+        </header>
+        <nav class="demo-navigation mdl-navigation mdl-color--grey-300">
+          <a class="mdl-navigation__link mdl-js-ripple-effect lo07-ripple-white" href="?action=dashboard"><span class="mdl-ripple"></span>
+            <i class="material-icons" role="presentation">home</i>
+            Dashboard
+          </a>
+          <a class="mdl-navigation__link mdl-js-ripple-effect lo07-ripple-white" href="?action=ajouter"><span class="mdl-ripple"></span>
+            <i class="material-icons" role="presentation">library_add</i>
+            Ajouter
+          </a>
+          <a class="mdl-navigation__link mdl-js-ripple-effect lo07-ripple-white" href="?action=visualiser"><span class="mdl-ripple"></span>
+            <i class="material-icons" role="presentation">list</i>
+            Visualiser
+          </a>
+          <a class="mdl-navigation__link mdl-js-ripple-effect lo07-ripple-white" href="?action=conformite"><span class="mdl-ripple"></span>
+            <i class="material-icons" role="presentation">check</i>
+            Conformité
+          </a>
+          <div class="mdl-layout-spacer"></div>
+          <a class="mdl-navigation__link mdl-js-ripple-effect lo07-ripple-white" href="?action=about"><span class="mdl-ripple"></span>
+            <i class="material-icons" role="presentation">help_outline</i>
+            À propos
+          </a>
+        </nav>
+      </div>
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content">
+          <div class="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid" id="page-body">
+
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="./include/js/material.min.js"></script>
+    <script src="./include/js/jquery-3.2.1.min.js"></script>
+    <script src="./js/script.js"></script>
+    <!-- componentHandler.upgradeAllRegistered(); -->
+  </body>
+</html>

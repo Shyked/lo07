@@ -1,0 +1,20 @@
+.lo07-title {
+  font-size: 2em;
+}
+
+.lo07-subtitle {
+  font-size: 1.2em;
+  margin-top: 0.4em;
+}
+
+ul.lo07-no-dot {
+  list-style-type: none;
+}
+
+.lo07-ripple-white {
+  position: relative;
+  overflow:hidden;
+}
+.lo07-ripple-white .mdl-ripple {
+  background-color: white;
+}
