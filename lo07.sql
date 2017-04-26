@@ -2,10 +2,10 @@
 -- version 4.1.14
 -- http://www.phpmyadmin.net
 --
--- Client :  127.0.0.1
--- Généré le :  Mer 26 Avril 2017 à 11:35
--- Version du serveur :  5.6.17
--- Version de PHP :  5.5.12
+-- Host: 127.0.0.1
+-- Generation Time: Apr 26, 2017 at 04:11 PM
+-- Server version: 5.6.17
+-- PHP Version: 5.5.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,13 +17,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de données :  `lo07`
+-- Database: `lo07`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `cursus`
+-- Table structure for table `cursus`
 --
 
 CREATE TABLE IF NOT EXISTS `cursus` (
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `cursus` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `cursus_elements`
+-- Table structure for table `cursus_elements`
 --
 
 CREATE TABLE IF NOT EXISTS `cursus_elements` (
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `cursus_elements` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `element`
+-- Table structure for table `element`
 --
 
 CREATE TABLE IF NOT EXISTS `element` (
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `element` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `etudiant`
+-- Table structure for table `etudiant`
 --
 
 CREATE TABLE IF NOT EXISTS `etudiant` (
@@ -78,6 +78,22 @@ CREATE TABLE IF NOT EXISTS `etudiant` (
   `admission` varchar(50) COLLATE utf8_bin NOT NULL,
   `filiere` varchar(50) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`numero`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reglement`
+--
+
+CREATE TABLE IF NOT EXISTS `reglement` (
+  `id_reglement` varchar(255) COLLATE utf8_bin NOT NULL,
+  `id_regle` varchar(50) COLLATE utf8_bin NOT NULL,
+  `agregat` varchar(50) COLLATE utf8_bin NOT NULL,
+  `categorie` varchar(100) COLLATE utf8_bin NOT NULL,
+  `affectation` varchar(100) COLLATE utf8_bin NOT NULL,
+  `credit` int(11) NOT NULL,
+  PRIMARY KEY (`id_reglement`,`id_regle`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

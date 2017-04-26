@@ -68,7 +68,12 @@
           success: function(html) {
             $("#page-body").html(html);
             componentHandler.upgradeAllRegistered();
-            // $("#page-body form").each
+            $("#page-body form").each(function(id, element) {
+              $(element).ajaxForm(function(res) {
+                eval(element.getAttribute('data-onresponse'))(res);
+              });
+              element.submit = function(e) { };
+            });
           },
           error: function(res) {
             console.log(res);

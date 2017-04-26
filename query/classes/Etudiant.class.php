@@ -29,13 +29,13 @@ class Etudiant {
 						WHERE numero = ?
 SQL
         	);
-        	$stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__) ;
+        	$stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
         	$stmt->bindValue(1, $numero);
         	$stmt->execute();
 					if (($object = $stmt->fetch()) !== false) {
           	return $object;
         	}
-        	throw new Exception(__CLASS__ . ' not found') ;
+        	throw new Exception(__CLASS__ . ' not found');
  	}
 
 	public function getNumero() {
