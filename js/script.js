@@ -5,6 +5,7 @@
     this.pages = pages;
     this.currentPage = null;
     this.classPrefix = 'pagemanager-';
+    this.pageParam = 'display';
     this.siteName = document.title;
 
 
@@ -14,7 +15,7 @@
     };
 
     this._initCurrentPage = function() {
-      var page = getURLParams('action');
+      var page = getURLParams(this.pageParam);
       if (this.pages[page]) {
         this.setCurrentPage(page);
       }
@@ -27,7 +28,7 @@
       var pageManager = this;
       window.addEventListener('click', function(e) {
         if (e.target.localName == 'a') {
-          var urlAction = getURLParams('action', e.target.getAttribute('href'));
+          var urlAction = getURLParams(pageManager.pageParam, e.target.getAttribute('href'));
           if (urlAction != null) {
             pageManager.setCurrentPage(urlAction);
             e.preventDefault();
@@ -43,7 +44,7 @@
       if (this.pages[page]) {
         // Change page URL
         var params = getURLParams();
-        params.action = page;
+        params[this.pageParam] = page;
         var paramsStr = '';
         for (var id in params) {
           if (paramsStr == '') paramsStr += '?' + id + '=' + params[id];
@@ -66,6 +67,8 @@
           dataType: "html",
           success: function(html) {
             $("#page-body").html(html);
+            componentHandler.upgradeAllRegistered();
+            // $("#page-body form").each
           },
           error: function(res) {
             console.log(res);
