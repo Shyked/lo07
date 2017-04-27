@@ -10,6 +10,16 @@
 
 
     this._init = function() {
+      var menuHtml = "";
+      for (var id in this.pages) {
+        menuHtml += "\
+          <a class='mdl-navigation__link mdl-js-ripple-effect lo07-ripple-white' href='?display=" + id + "'><span class='mdl-ripple'></span>\
+            <i class='material-icons' role='presentation'>" + this.pages[id].icon + "</i>\
+            " + this.pages[id].label + "\
+          </a>\
+        ";
+      }
+      $("#pagemanager-menu").html(menuHtml);
       this._initCurrentPage();
       this._initEvents();
     };
@@ -68,6 +78,7 @@
           success: function(html) {
             $("#page-body").html(html);
             componentHandler.upgradeAllRegistered();
+            getmdlSelect.init('.getmdl-select');
             $("#page-body form").each(function(id, element) {
               $(element).ajaxForm(function(res) {
                 eval(element.getAttribute('data-onresponse'))(res);
@@ -117,6 +128,11 @@
       title: 'Dashboard',
       icon: 'home'
     },
+    etudiants: {
+      label: 'Étudiants',
+      title: 'Gérer les étudiants',
+      icon: 'person'
+    },
     ajouter: {
       label: 'Ajouter',
       title: 'Ajouter un nouveau cursus',
@@ -132,6 +148,11 @@
       title: 'Vérifier la conformité des cursus',
       icon: 'check'
     },
+    tests: {
+      label: 'Tests',
+      title: 'Tests',
+      icon: 'pets'
+    }
   });
 
 })();

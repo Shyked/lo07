@@ -1,3 +1,7 @@
+body {
+  color: rgba(0, 0, 0, 0.7);
+}
+
 .lo07-title {
   font-size: 2em;
 }
@@ -17,4 +21,50 @@ ul.lo07-no-dot {
 }
 .lo07-ripple-white .mdl-ripple {
   background-color: white;
+}
+
+.getmdl-select > .mdl-menu__container {
+  margin-top: 2px;
+}
+
+#page-body {
+  
+}
+
+.lo07-text-block {
+  padding-left: 1em;
+  box-sizing: border-box;
+}
+
+h5 {
+  margin-bottom: 0.5em;
+}
+
+.lo07-card-title {
+  padding: 1.5em 1em 0.7em 1em;
+  background-color: #303F9F;
+  color: white;
+  font-size: 1.8em;
+  vertical-align: bottom;
+  font-weight: 300;
+}
+
+.lo07-card-body {
+  padding: 1em 2em 2em 3em;
+}
+
+.lo07-radio {
+  margin-right: 2em;
+}
+
+.mdl-textfield {
+  padding: 20px 0 5px 0;
+}
+
+.mdl-textfield__label::after {
+  bottom: 5px;
+}
+
+.lo07-submit {
+  margin: 3em 0 1em 0;
 }
