@@ -81,7 +81,7 @@
             getmdlSelect.init('.getmdl-select');
             $("#page-body form").each(function(id, element) {
               $(element).ajaxForm(function(res) {
-                eval(element.getAttribute('data-onresponse'))(res);
+                eval(element.getAttribute('data-onresponse')).call(element, res.response, res.error);
               });
               element.submit = function(e) { };
             });

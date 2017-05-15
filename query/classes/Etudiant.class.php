@@ -23,19 +23,36 @@ class Etudiant {
 	 * @return Etudiant L'étudiant à qui appartient l'ID renseigné
 	 */
 	public static function createFromID($numero) {
-  	$stmt = myPDO::getInstance()->prepare(<<<SQL
+		global $pdo;
+  	$stmt = $pdo->prepare(<<<SQL
   		SELECT *
   		FROM etudiant
-			WHERE numero = ?
+			WHERE numero = :numero
 SQL
   	);
   	$stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
-  	$stmt->bindValue(1, $numero);
-  	$stmt->execute();
+  	$stmt->execute(array(
+  		'numero' => $numero
+  	));
 		if (($object = $stmt->fetch()) !== false) {
     	return $object;
   	}
   	throw new Exception(__CLASS__ . ' not found');
+ 	}
+
+ 	public static function exists($numero) {
+ 		global $pdo;
+ 		$stmt = $pdo->prepare(<<<SQL
+ 			SELECT numero
+ 			FROM etudiant
+ 			WHERE numero = :numero
+SQL
+		);
+  	$stmt->execute(array(
+  		'numero' => $numero
+  	));
+  	if ($stmt->fetch()) return true;
+  	else return false;
  	}
 
 	public function getNumero() {
@@ -83,13 +100,17 @@ SQL
 SQL
 );
 		$stmt->execute(array(
-			"attr" => $attr
+			"attr" => $attr,
 			"value" => $value,
 			"numero" => $this->numero
 		));
 		$this->{$attr} = $value;
 	}
 
+
+	public function export() {
+		return get_object_vars($this);
+	}
 
 	/** 
 	 * createEtudiant
@@ -118,7 +139,7 @@ SQL
 		  "admission" => $admission,
 		  "filiere" => $filiere
 		));
-		return self::createFromID($pdo->lastInsertId());
+		return self::createFromID($numero);
 	}
 	
 	/** 

@@ -54,7 +54,7 @@ echo <<<HTML
   </div>
 
   <script>
-    var onresponse = function(res) {
+    var onresponse = function(response, error) {
 
     };
   </script>

@@ -40,6 +40,11 @@ h5 {
   margin-bottom: 0.5em;
 }
 
+h6 {
+  margin-bottom: 0em;
+  margin-top: 0.5em;
+}
+
 .lo07-card-title {
   padding: 1.5em 1em 0.7em 1em;
   background-color: #303F9F;
@@ -47,6 +52,10 @@ h5 {
   font-size: 1.8em;
   vertical-align: bottom;
   font-weight: 300;
+}
+
+.lo07-card-title.lo07-card-background-accent {
+  background-color: #FF5252;
 }
 
 .lo07-card-body {
@@ -67,4 +76,16 @@ h5 {
 
 .lo07-submit {
   margin: 3em 0 1em 0;
+}
+
+.lo07-form-notice {
+
+}
+
+.lo07-form-notice-success {
+  color: #55dd55;
+}
+
+.lo07-form-notice-error {
+  color: #ee6666;
 }

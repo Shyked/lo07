@@ -1,60 +1,74 @@
 <?php
 
-/* Formulaire qui serait sous la liste des étudiants visible après un clic
- pour ajouter un étudiant */
+require_once "../classes/Components.class.php";
+
+/* Formulaire visible à côté de la liste des étudiants */
+
+
+
+
+$inputNumEtu = Components::number("numero", "Numéro étudiant");
+$inputNom = Components::text("nom", "Nom");
+$inputPrenom = Components::text("prenom", "Prenom");
+$inputAdmission = Components::select("admission", "Admission", array(
+  "TC",
+  "BR"
+), null);
+$inputFiliere = Components::select("filiere", "Filière", array(
+  "?",
+  "MPL",
+  "MSI",
+  "MRI",
+  "LIB"
+), "");
+
+
+
 
 echo <<<HTML
 
+  <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
+    <div class="lo07-card-title">
+      Liste des étudiants
+    </div>
 
+    <div class="lo07-card-body">
+      
+    </div>
+  </div>
 
-<script>
+  <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top">
+    <div class="lo07-card-title lo07-card-background-accent">
+      Ajouter un étudiant
+    </div>
 
-function AfficherMasquer() {
-  divInfo = document.getElementById('divacacher');
-  if (divInfo.style.display == 'none')
-  divInfo.style.display = 'block';
-  else
-  divInfo.style.display = 'none';
- }
- </script>
+    <div class="lo07-card-body">
+      <form method='post' action='query/actions/etudiant.php?action=add' data-onresponse="onresponse">
+        <div>{$inputNumEtu}</div>
+        <div>{$inputNom}</div>
+        <div>{$inputPrenom}</div>
+        <div>{$inputAdmission}</div>
+        <div>{$inputFiliere}</div>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent lo07-submit" onclick="this.form.submit();">Ajouter</button>
+        <div class='lo07-form-notice'></div>
+      </form>
+    </div>
+  </div>
 
- <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onclick="AfficherMasquer();">
-   <i class="material-icons">add</i>
- </button>
-
-
-
-<div id="divacacher" style="display:none;">
-<form method='post' action='query/actions/etu.php' data-onresponse="onresponse">
-  <p>
-    <label for "numEtu">Numéro étudiant</label> <input type="text" name="numEtu" id="numEtu" /> </br>
-    <label for="nom">Nom</label> <input type="text" name="nom" id="nom"/> </br>
-    <label for="prenom">Prénom</label> <input type="text" name="prenom" id="prenom" /> </br>
-    <label for="admission"> Admission </label>
-    <select name="admission" id="admission">
-      <option value="tc">TC</option>
-      <option value="br">BR</option>
-    </select> </br>
-    <label for="filiere"> Filière </label>
-    <select name="filiere" id="filiere">
-      <option value="tc">?</option>
-      <option value="mpl">MPL</option>
-      <option value="msi">MSI</option>
-      <option value="mri">MRI</option>
-      <option value="lib">LIB</option>
-    </select>
-
-  </p>
-  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="this.form.submit();">Envoyer</button>
-</form>
-</div>
-
-
-<script>
-  var onresponse = function(res) {
-
-  };
-</script>
-
+  <script>
+    var onresponse = function(response, error) {
+      var notice = this.getElementsByClassName('lo07-form-notice')[0];
+      if (error) {
+        notice.classList.remove('lo07-form-notice-success');
+        notice.classList.add('lo07-form-notice-error');
+        notice.innerHTML = error;
+      }
+      else {
+        notice.classList.remove('lo07-form-notice-error');
+        notice.classList.add('lo07-form-notice-success');
+        notice.innerHTML = 'Etudiant ajouté avec succès';
+      }
+    };
+  </script>
 
 HTML;
