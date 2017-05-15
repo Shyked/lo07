@@ -23,19 +23,19 @@ class Etudiant {
 	 * @return Etudiant L'étudiant à qui appartient l'ID renseigné
 	 */
 	public static function createFromID($numero) {
-        	$stmt = myPDO::getInstance()->prepare(<<<SQL
-        		SELECT *
-        		FROM etudiant
-						WHERE numero = ?
+  	$stmt = myPDO::getInstance()->prepare(<<<SQL
+  		SELECT *
+  		FROM etudiant
+			WHERE numero = ?
 SQL
-        	);
-        	$stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
-        	$stmt->bindValue(1, $numero);
-        	$stmt->execute();
-					if (($object = $stmt->fetch()) !== false) {
-          	return $object;
-        	}
-        	throw new Exception(__CLASS__ . ' not found');
+  	);
+  	$stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
+  	$stmt->bindValue(1, $numero);
+  	$stmt->execute();
+		if (($object = $stmt->fetch()) !== false) {
+    	return $object;
+  	}
+  	throw new Exception(__CLASS__ . ' not found');
  	}
 
 	public function getNumero() {
@@ -60,28 +60,34 @@ SQL
 
 	
 	public function setNom($nom) {
-		
+		$this->set('nom', $nom);
 	}
 	
 	public function setPrenom($prenom) {
-		global $pdo;
-		$stmt = $pdo->prepare(<<<SQL
-				UPDATE Etudiant SET prenom = :prenom WHERE numero = :numero
-SQL
-);
-		$stmt->execute(array(
-		 "prenom" => $prenom,
-		 "numero" => $this->numero
-		));
-		$this->prenom = $prenom;
+		$this->set('prenom', $prenom);
 	}
 	
 	public function setAdmission($admission) {
-
+		$this->set('admission', $admission);
 	}
 	
 	public function setFiliere($filiere) {
-		
+		$this->set('filiere', $filiere);
+	}
+
+	private function set($attr, $value) {
+		global $pdo;
+		$class = __CLASS__;
+		$stmt = $pdo->prepare(<<<SQL
+			UPDATE {$class} SET :attr = :value WHERE numero = :numero
+SQL
+);
+		$stmt->execute(array(
+			"attr" => $attr
+			"value" => $value,
+			"numero" => $this->numero
+		));
+		$this->{$attr} = $value;
 	}
 
 
