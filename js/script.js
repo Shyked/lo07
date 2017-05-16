@@ -108,7 +108,7 @@
     var vars = {};
     if (typeof url === 'undefined') url = window.location.href;
     url.replace( 
-      /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
+      /[?&]+([^=&#]+)=?([^&#]*)?/gi, // regexp
       function( m, key, value ) { // callback
         vars[key] = value !== undefined ? value : '';
       }

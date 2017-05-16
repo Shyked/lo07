@@ -33,7 +33,26 @@ echo <<<HTML
     </div>
 
     <div class="lo07-card-body">
-      
+      <table class="lo07-list">
+        <tr>
+          <td><i class="material-icons mdl-list__item-avatar">person</i></td>
+          <td>39959</td>
+          <td class="lo07-list-primary">Rémy Haingue</td>
+          <td>BR</td>
+          <td>MPL</td>
+          <td class="lo07-list-right"><a class="mdl-list__item-primary-action lo07-yellow" href="#"><i class="material-icons">edit</i></a></td>
+          <td class="lo07-list-right"><a class="mdl-list__item-secondary-action lo07-red" href="#"><i class="material-icons">delete</i></a></td>
+        </tr>
+        <tr>
+          <td><i class="material-icons mdl-list__item-avatar">person</i></td>
+          <td>39959</td>
+          <td class="lo07-list-primary">Rémy Haingue</td>
+          <td>BR</td>
+          <td>MPL</td>
+          <td class="lo07-list-right"><a class="mdl-list__item-primary-action lo07-yellow" href="#"><i class="material-icons">edit</i></a></td>
+          <td class="lo07-list-right"><a class="mdl-list__item-secondary-action lo07-red" href="#"><i class="material-icons">delete</i></a></td>
+        </tr>
+      </table>
     </div>
   </div>
 
@@ -59,13 +78,13 @@ echo <<<HTML
     var onresponse = function(response, error) {
       var notice = this.getElementsByClassName('lo07-form-notice')[0];
       if (error) {
-        notice.classList.remove('lo07-form-notice-success');
-        notice.classList.add('lo07-form-notice-error');
+        notice.classList.remove('lo07-green');
+        notice.classList.add('lo07-red');
         notice.innerHTML = error;
       }
       else {
-        notice.classList.remove('lo07-form-notice-error');
-        notice.classList.add('lo07-form-notice-success');
+        notice.classList.remove('lo07-red');
+        notice.classList.add('lo07-green');
         notice.innerHTML = 'Etudiant ajouté avec succès';
       }
     };

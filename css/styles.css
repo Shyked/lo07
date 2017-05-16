@@ -82,10 +82,33 @@ h6 {
 
 }
 
-.lo07-form-notice-success {
+.lo07-green {
   color: #55dd55;
 }
 
-.lo07-form-notice-error {
-  color: #ee6666;
+.lo07-red {
+  color: #FF5252;
+}
+
+.lo07-yellow {
+  color: #ffcc55;
+}
+
+table.lo07-list {
+  font-size: 1.3em;
+  width: 100%;
+  font-weight: 300;
+  padding: 0.5em;
+}
+
+table.lo07-list td {
+  padding: 0.5em 0;
+}
+
+.lo07-list-right {
+  text-align: right;
+}
+
+.lo07-list-primary {
+  font-weight: 400;
 }
