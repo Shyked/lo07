@@ -30,7 +30,6 @@ try {
   }
 
   else if ($action == 'add') {
-
     if (requireParams('numero', 'nom', 'prenom', 'admission', 'filiere')) {
       if (Etudiant::exists($_POST['numero'])) $result['error'] = "Ce numéro est déjà associé à un étudiant";
       else {
@@ -40,7 +39,11 @@ try {
     else {
       $result['error'] = "Merci de compléter tous les champs non-optionnels";
     }
+  }
 
+  else if ($action == 'delete') {
+    $etudiant = Etudiant::createFromID($_POST['numero']);
+    $etudiant->delete();
   }
 }
 catch (Exception $e) {

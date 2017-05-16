@@ -45,6 +45,10 @@ h6 {
   margin-top: 0.5em;
 }
 
+a {
+  cursor: pointer;
+}
+
 .lo07-card-title {
   padding: 1.5em 1em 0.7em 1em;
   background-color: #303F9F;
@@ -91,6 +95,18 @@ h6 {
 }
 
 .lo07-yellow {
+  color: #ffcc55;
+}
+
+.lo07-lightgrey {
+ color: #cccdd5;
+}
+
+.lo07-hover-red:hover {
+  color: #FF5252;
+}
+
+.lo07-hover-yellow:hover {
   color: #ffcc55;
 }
 

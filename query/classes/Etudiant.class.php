@@ -112,6 +112,23 @@ SQL
 		return get_object_vars($this);
 	}
 
+
+	public function delete() {
+		global $pdo;
+		$this->deleteDependencies();
+		$class = __CLASS__;
+		$stmt = $pdo->prepare(<<<SQL
+			DELETE FROM {$class} WHERE numero = :numero
+SQL
+);
+		$stmt->execute(array(
+			"numero" => $this->numero
+		));
+	}
+	
+	public function deleteDependencies() {
+	}
+
 	/** 
 	 * createEtudiant
 	 *

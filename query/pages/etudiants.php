@@ -34,24 +34,7 @@ echo <<<HTML
 
     <div class="lo07-card-body">
       <table class="lo07-list" id="lo07-etudiants">
-        <tr>
-          <td><i class="material-icons mdl-list__item-avatar">person</i></td>
-          <td>39959</td>
-          <td class="lo07-list-primary">Rémy Haingue</td>
-          <td>BR</td>
-          <td>MPL</td>
-          <td class="lo07-list-right"><a class="mdl-list__item-primary-action lo07-yellow" href="#"><i class="material-icons">edit</i></a></td>
-          <td class="lo07-list-right"><a class="mdl-list__item-secondary-action lo07-red" href="#"><i class="material-icons">delete</i></a></td>
-        </tr>
-        <tr>
-          <td><i class="material-icons mdl-list__item-avatar">person</i></td>
-          <td>39959</td>
-          <td class="lo07-list-primary">Rémy Haingue</td>
-          <td>BR</td>
-          <td>MPL</td>
-          <td class="lo07-list-right"><a class="mdl-list__item-primary-action lo07-yellow" href="#"><i class="material-icons">edit</i></a></td>
-          <td class="lo07-list-right"><a class="mdl-list__item-secondary-action lo07-red" href="#"><i class="material-icons">delete</i></a></td>
-        </tr>
+      
       </table>
     </div>
   </div>
@@ -69,7 +52,7 @@ echo <<<HTML
         <div>{$inputAdmission}</div>
         <div>{$inputFiliere}</div>
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent lo07-submit" onclick="this.form.submit();">Ajouter</button>
-        <div class='lo07-form-notice'></div>
+        <div class='lo07-form-notice lo07-red'></div>
       </form>
     </div>
   </div>
@@ -78,14 +61,11 @@ echo <<<HTML
     var onresponse = function(response, error) {
       var notice = this.getElementsByClassName('lo07-form-notice')[0];
       if (error) {
-        notice.classList.remove('lo07-green');
-        notice.classList.add('lo07-red');
         notice.innerHTML = error;
       }
       else {
-        notice.classList.remove('lo07-red');
-        notice.classList.add('lo07-green');
-        notice.innerHTML = 'Etudiant ajouté avec succès';
+        notice.innerHTML = '';
+        swal("Ajouté !", "Étudiant ajouté avec succès", "success");
         refreshList();
       }
     };
@@ -109,9 +89,10 @@ echo <<<HTML
                 <td class="lo07-list-primary">' + etudiants[id].prenom + ' ' + etudiants[id].nom + '</td>\
                 <td>' + etudiants[id].admission + '</td>\
                 <td>' + etudiants[id].filiere + '</td>\
-                <td class="lo07-list-right"><a class="mdl-list__item-primary-action lo07-yellow" href="#"><i class="material-icons">edit</i></a></td>\
-                <td class="lo07-list-right"><a class="mdl-list__item-secondary-action lo07-red" href="#"><i class="material-icons">delete</i></a></td>\
+                <td class="lo07-list-right"><a class="mdl-list__item-primary-action lo07-lightgrey lo07-hover-yellow"><i class="material-icons">edit</i></a></td>\
+                <td class="lo07-list-right"><a class="mdl-list__item-secondary-action lo07-lightgrey lo07-hover-red" onclick="deleteObject(' + etudiants[id].numero + ', event);"><i class="material-icons">delete</i></a></td>\
               ';
+              tr.id = 'lo07-etudiant-' + etudiants[id].numero;
               etudiantsTable.appendChild(tr);
             }
           }
@@ -119,6 +100,35 @@ echo <<<HTML
         error: function(res) {
           
         }
+      });
+    };
+
+    var deleteObject = function(numero, event) {
+      swal({
+        title: "Êtes-vous sûr ?",
+        text: "La suppression ne peut être annulée, il vous faudra saisir les informations à nouveau.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#FF5252",
+        confirmButtonText: "Oui, supprimer !",
+        closeOnConfirm: false
+      },
+      function() {
+        $.ajax("./query/actions/etudiant.php?action=delete", {
+          type: 'post',
+          data: 'numero=' + numero,
+          dataType: "json",
+          success: function(result) {
+            var etuEl = document.getElementById(('lo07-etudiant-' + numero));
+            if (etuEl) {
+              etuEl.parentElement.removeChild(etuEl);
+            }
+            swal("Supprimé !", "L'étudiant a bien été supprimé de la liste.", "success");
+          },
+          error: function(res) {
+            swal("Oups...", "Une erreur est survenue lors de la suppression.", "error");
+          }
+        });
       });
     };
 
