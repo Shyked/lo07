@@ -21,12 +21,18 @@ $result = array(
 
 try {
   if ($action == 'get') {
-    $etudiants = Etudiant::getAll();
-    $etudiantsExport = array();
-    foreach ($etudiants as $key => $etudiant) {
-      array_push($etudiantsExport, $etudiant->export());
+    if (!empty($_POST['numero'])) {
+      $etudiant = Etudiant::createFromID($_POST['numero']);
+      $result['response'] = $etudiant->export();
     }
-    $result['response'] = $etudiantsExport;
+    else {
+      $etudiants = Etudiant::getAll();
+      $etudiantsExport = array();
+      foreach ($etudiants as $key => $etudiant) {
+        array_push($etudiantsExport, $etudiant->export());
+      }
+      $result['response'] = $etudiantsExport;
+    }
   }
 
   else if ($action == 'add') {
@@ -37,13 +43,31 @@ try {
       }
     }
     else {
-      $result['error'] = "Merci de compléter tous les champs non-optionnels";
+      $result['error'] = "Merci de compléter tous les champs ci-dessus";
+    }
+  }
+
+  else if ($action == 'edit') {
+    if (requireParams('numero', 'nom', 'prenom', 'admission', 'filiere')) {
+      $etudiant = Etudiant::createFromID($_POST['numero']);
+      $etudiant->setNom($_POST['nom']);
+      $etudiant->setPrenom($_POST['prenom']);
+      $etudiant->setAdmission($_POST['admission']);
+      $etudiant->setFiliere($_POST['filiere']);
+      $result['response'] = $etudiant->export();
+    }
+    else {
+      $result['error'] = "Merci de compléter tous les champs ci-dessus";
     }
   }
 
   else if ($action == 'delete') {
     $etudiant = Etudiant::createFromID($_POST['numero']);
     $etudiant->delete();
+  }
+
+  else {
+    $result['error'] = "Unknown action";
   }
 }
 catch (Exception $e) {

@@ -34,39 +34,42 @@ echo <<<HTML
 
     <div class="lo07-card-body">
       <table class="lo07-list" id="lo07-etudiants">
-      
+
       </table>
     </div>
   </div>
 
-  <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top">
-    <div class="lo07-card-title lo07-card-background-accent">
+  <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top lo07-card-add" id="lo07-etudiant-card">
+    <div class="lo07-card-title">
       Ajouter un étudiant
     </div>
 
     <div class="lo07-card-body">
-      <form method='post' action='query/actions/etudiant.php?action=add' data-onresponse="onresponse">
+      <form id="lo07-form-add" method='post' action='query/actions/etudiant.php?action=add' data-onresponse="formResponse">
         <div>{$inputNumEtu}</div>
         <div>{$inputNom}</div>
         <div>{$inputPrenom}</div>
         <div>{$inputAdmission}</div>
         <div>{$inputFiliere}</div>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent lo07-submit" onclick="this.form.submit();">Ajouter</button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect lo07-only-edit lo07-button-submit lo07-button-cancel" onclick="return resetForm();">Annuler</button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent lo07-button lo07-button-submit" onclick="this.form.submit();"><span id="lo07-button-add-label">Ajouter</span></button>
         <div class='lo07-form-notice lo07-red'></div>
       </form>
     </div>
   </div>
 
   <script>
-    var onresponse = function(response, error) {
+    var formResponse = function(response, error) {
       var notice = this.getElementsByClassName('lo07-form-notice')[0];
       if (error) {
         notice.innerHTML = error;
       }
       else {
         notice.innerHTML = '';
-        swal("Ajouté !", "Étudiant ajouté avec succès", "success");
+        if (/=add/.test(this.getAttribute('action'))) swal("Ajouté !", "Étudiant ajouté avec succès", "success");
+        else if (/=edit/.test(this.getAttribute('action'))) swal("Informations modifiées !", "Les informations de cet étudiant ont été modifiées avec succès", "success");
         refreshList();
+        resetForm();
       }
     };
 
@@ -83,14 +86,18 @@ echo <<<HTML
             etudiantsTable.innerHTML = '';
             for (var id in etudiants) {
               var tr = document.createElement('tr');
+              var nameSum = 0;
+              for (var idS in etudiants[id].nom) nameSum += etudiants[id].nom.charCodeAt(2);
+              for (var idS in etudiants[id].prenom) nameSum += etudiants[id].prenom.charCodeAt(2);
+              var color = 'rgb(' + Math.floor(150 + Math.pow((nameSum / 10 + 1.5) % 4.6, 3)) + ',' + Math.floor(150 + Math.pow((nameSum / 10 + 3) % 4.6, 3)) + ',' + Math.floor(150 + Math.pow((nameSum / 10) % 4.6, 3)) + ')';
               tr.innerHTML = '\
-                <td><i class="material-icons mdl-list__item-avatar">person</i></td>\
+                <td><i class="material-icons mdl-list__item-avatar" style="background-color: ' + color + ';">person</i></td>\
                 <td>' + etudiants[id].numero + '</td>\
                 <td class="lo07-list-primary">' + etudiants[id].prenom + ' ' + etudiants[id].nom + '</td>\
                 <td>' + etudiants[id].admission + '</td>\
                 <td>' + etudiants[id].filiere + '</td>\
-                <td class="lo07-list-right"><a class="mdl-list__item-primary-action lo07-lightgrey lo07-hover-yellow"><i class="material-icons">edit</i></a></td>\
-                <td class="lo07-list-right"><a class="mdl-list__item-secondary-action lo07-lightgrey lo07-hover-red" onclick="deleteObject(' + etudiants[id].numero + ', event);"><i class="material-icons">delete</i></a></td>\
+                <td class="lo07-list-right"><a class="mdl-list__item-primary-action lo07-lightgrey lo07-hover-yellow lo07-transition-faster" onclick="editObject(' + etudiants[id].numero + ');"><i class="material-icons">edit</i></a></td>\
+                <td class="lo07-list-right"><a class="mdl-list__item-secondary-action lo07-lightgrey lo07-hover-red lo07-transition-faster" onclick="deleteObject(' + etudiants[id].numero + ');"><i class="material-icons">delete</i></a></td>\
               ';
               tr.id = 'lo07-etudiant-' + etudiants[id].numero;
               etudiantsTable.appendChild(tr);
@@ -98,12 +105,12 @@ echo <<<HTML
           }
         },
         error: function(res) {
-          
+          swal("Oups...", "Une erreur est survenue lors de la récupération de la liste...", "error");
         }
       });
     };
 
-    var deleteObject = function(numero, event) {
+    var deleteObject = function(numero) {
       swal({
         title: "Êtes-vous sûr ?",
         text: "La suppression ne peut être annulée, il vous faudra saisir les informations à nouveau.",
@@ -119,18 +126,89 @@ echo <<<HTML
           data: 'numero=' + numero,
           dataType: "json",
           success: function(result) {
-            var etuEl = document.getElementById(('lo07-etudiant-' + numero));
-            if (etuEl) {
-              etuEl.parentElement.removeChild(etuEl);
+            if (result.error) {
+              this.error();
             }
-            swal("Supprimé !", "L'étudiant a bien été supprimé de la liste.", "success");
+            else {
+              var etuEl = document.getElementById(('lo07-etudiant-' + numero));
+              if (etuEl) {
+                etuEl.parentElement.removeChild(etuEl);
+              }
+              swal("Supprimé !", "L'étudiant a bien été supprimé de la liste.", "success");
+            }
           },
           error: function(res) {
+            refreshList();
             swal("Oups...", "Une erreur est survenue lors de la suppression.", "error");
           }
         });
       });
     };
+
+    var editObject = function(numero) {
+      $.ajax("./query/actions/etudiant.php?action=get", {
+        type: 'post',
+        data: 'numero=' + numero,
+        dataType: "json",
+        success: function(result) {
+          if (result.error) {
+            this.error();
+          }
+          else {
+            var addCard = $('#lo07-etudiant-card');
+            addCard[0].classList.add('lo07-card-edit');
+            addCard[0].classList.remove('lo07-card-add');
+            var buttonLabel = $('#lo07-button-add-label');
+            buttonLabel.html('Modifier');
+            var cardTitle = $('#lo07-etudiant-card .lo07-card-title');
+            cardTitle.html("Modifier un étudiant");
+            var form = $('#lo07-form-add')[0];
+            form.setAttribute('action', form.getAttribute('action').replace(/=add/, '=edit'))
+            var etudiant = result.response;
+            updateInput(form.numero, etudiant.numero);
+            updateInput(form.nom, etudiant.nom);
+            updateInput(form.prenom, etudiant.prenom);
+            updateInput(form.admission, etudiant.admission);
+            updateInput(form.filiere, etudiant.filiere);
+            form.numero.setAttribute('readonly', 'readonly');
+          }
+        },
+        error: function(res) {
+          refreshList();
+          swal("Oups...", "Une erreur est survenue !", "error");
+        }
+      });
+    };
+
+    var resetForm = function() {
+      var addCard = document.getElementById('lo07-etudiant-card');
+      addCard.classList.remove('lo07-card-edit');
+      addCard.classList.add('lo07-card-add');
+      var buttonLabel = document.getElementById('lo07-button-add-label');
+      buttonLabel.innerHTML = 'Ajouter';
+      var cardTitle = addCard.getElementsByClassName('lo07-card-title')[0];
+      cardTitle.innerHTML = "Ajouter un étudiant";
+      var form = $('#lo07-form-add')[0];
+      form.setAttribute('action', form.getAttribute('action').replace(/=edit/, '=add'))
+      updateInput(form.numero, '');
+      updateInput(form.nom, '');
+      updateInput(form.prenom, '');
+      updateInput(form.admission, '');
+      updateInput(form.filiere, '');
+      form.numero.removeAttribute('readonly');
+      return false;
+    };
+
+
+    var updateInput = function(input, value) {
+      input.value = value;
+      if (value.toString().length > 0) {
+        input.parentElement.classList.add('is-dirty');
+      }
+      else {
+        input.parentElement.classList.remove('is-dirty');
+      }
+    }
 
     refreshList();
   </script>

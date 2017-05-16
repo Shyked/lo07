@@ -96,11 +96,10 @@ SQL
 		global $pdo;
 		$class = __CLASS__;
 		$stmt = $pdo->prepare(<<<SQL
-			UPDATE {$class} SET :attr = :value WHERE numero = :numero
+			UPDATE {$class} SET {$attr} = :value WHERE numero = :numero
 SQL
 );
 		$stmt->execute(array(
-			"attr" => $attr,
 			"value" => $value,
 			"numero" => $this->numero
 		));

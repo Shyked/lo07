@@ -27,6 +27,10 @@ ul.lo07-no-dot {
   margin-top: 2px;
 }
 
+.sweet-alert .sa-button-container .sa-confirm-button-container .confirm {
+  background-color: #303F9F;
+}
+
 #page-body {
   
 }
@@ -56,10 +60,16 @@ a {
   font-size: 1.8em;
   vertical-align: bottom;
   font-weight: 300;
+  transition-duration: 300ms;
 }
 
-.lo07-card-title.lo07-card-background-accent {
+.lo07-card-add .lo07-card-title {
   background-color: #FF5252;
+}
+
+.lo07-card-edit .lo07-card-title {
+  background-color: #ffcc55;
+  color: #222222;
 }
 
 .lo07-card-body {
@@ -78,8 +88,29 @@ a {
   bottom: 5px;
 }
 
-.lo07-submit {
-  margin: 3em 0 1em 0;
+.lo07-button-submit {
+  margin: 3em 1em 1em 0;
+}
+
+.lo07-card-add .mdl-button--accent.lo07-button-submit {
+  background-color: #FF5252;
+}
+
+.lo07-card-edit .mdl-button--accent.lo07-button-submit {
+  color: #222222;
+  background-color: #ffcc55;
+}
+
+.lo07-button-cancel {
+  
+}
+
+.lo07-only-edit {
+  display: none;
+}
+
+.lo07-card-edit .lo07-only-edit {
+  display: inline-block;
 }
 
 .lo07-form-notice {
@@ -108,6 +139,10 @@ a {
 
 .lo07-hover-yellow:hover {
   color: #ffcc55;
+}
+
+.lo07-transition-faster {
+  transition-duration: 150ms;
 }
 
 table.lo07-list {
