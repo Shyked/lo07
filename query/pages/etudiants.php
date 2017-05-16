@@ -33,7 +33,7 @@ echo <<<HTML
     </div>
 
     <div class="lo07-card-body">
-      <table class="lo07-list">
+      <table class="lo07-list" id="lo07-etudiants">
         <tr>
           <td><i class="material-icons mdl-list__item-avatar">person</i></td>
           <td>39959</td>
@@ -86,8 +86,43 @@ echo <<<HTML
         notice.classList.remove('lo07-red');
         notice.classList.add('lo07-green');
         notice.innerHTML = 'Etudiant ajouté avec succès';
+        refreshList();
       }
     };
+
+    var refreshList = function() {
+      $.ajax("./query/actions/etudiant.php?action=get", {
+        dataType: "json",
+        success: function(result) {
+          if (result.error) {
+            console.error(error);
+          }
+          else {
+            var etudiants = result.response;
+            var etudiantsTable = document.getElementById('lo07-etudiants');
+            etudiantsTable.innerHTML = '';
+            for (var id in etudiants) {
+              var tr = document.createElement('tr');
+              tr.innerHTML = '\
+                <td><i class="material-icons mdl-list__item-avatar">person</i></td>\
+                <td>' + etudiants[id].numero + '</td>\
+                <td class="lo07-list-primary">' + etudiants[id].prenom + ' ' + etudiants[id].nom + '</td>\
+                <td>' + etudiants[id].admission + '</td>\
+                <td>' + etudiants[id].filiere + '</td>\
+                <td class="lo07-list-right"><a class="mdl-list__item-primary-action lo07-yellow" href="#"><i class="material-icons">edit</i></a></td>\
+                <td class="lo07-list-right"><a class="mdl-list__item-secondary-action lo07-red" href="#"><i class="material-icons">delete</i></a></td>\
+              ';
+              etudiantsTable.appendChild(tr);
+            }
+          }
+        },
+        error: function(res) {
+          
+        }
+      });
+    };
+
+    refreshList();
   </script>
 
 HTML;

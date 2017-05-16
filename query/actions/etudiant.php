@@ -20,7 +20,16 @@ $result = array(
 );
 
 try {
-  if ($action == 'add') {
+  if ($action == 'get') {
+    $etudiants = Etudiant::getAll();
+    $etudiantsExport = array();
+    foreach ($etudiants as $key => $etudiant) {
+      array_push($etudiantsExport, $etudiant->export());
+    }
+    $result['response'] = $etudiantsExport;
+  }
+
+  else if ($action == 'add') {
 
     if (requireParams('numero', 'nom', 'prenom', 'admission', 'filiere')) {
       if (Etudiant::exists($_POST['numero'])) $result['error'] = "Ce numéro est déjà associé à un étudiant";
