@@ -58,6 +58,7 @@ a {
   background-color: #303F9F;
   color: white;
   font-size: 1.8em;
+  line-height: 1.4em;
   vertical-align: bottom;
   font-weight: 300;
   transition-duration: 300ms;
@@ -102,7 +103,7 @@ a {
 }
 
 .lo07-button-cancel {
-  
+
 }
 
 .lo07-only-edit {
@@ -153,7 +154,7 @@ table.lo07-list {
 }
 
 table.lo07-list td {
-  padding: 0.5em 0;
+  padding: 0.5em 0.5em;
 }
 
 .lo07-list-right {
