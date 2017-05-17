@@ -83,6 +83,13 @@ HTML;
 		return $html;
 	}
 
+	public static function hidden($name, $default = '') {
+		$id = self::getComponentId('hidden');
+		return <<<HTML
+			<input name="{$name}" type="hidden" value="{$default}" id="{$id}" />
+HTML;
+	}
+
 
 	public static function getComponentId($type) {
 		self::$component_count++;

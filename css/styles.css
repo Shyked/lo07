@@ -23,6 +23,11 @@ ul.lo07-no-dot {
   background-color: white;
 }
 
+.mdl-list__item-avatar, .mdl-list__item-avatar.material-icons {
+  padding: 5px;
+  font-size: 30px;
+}
+
 .getmdl-select > .mdl-menu__container {
   margin-top: 2px;
 }
@@ -32,7 +37,15 @@ ul.lo07-no-dot {
 }
 
 #page-body {
-  
+  transition-duration: 250ms;
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+#page-body.pagemanager-body-loading {
+  transition-duration: 150ms;
+  transform: translateY(20px);
+  opacity: 0;
 }
 
 .lo07-text-block {
@@ -79,6 +92,10 @@ a {
 
 .lo07-radio {
   margin-right: 2em;
+}
+
+.lo07-checkbox-block {
+  margin-top: 1.5em;
 }
 
 .mdl-textfield {
@@ -147,7 +164,7 @@ a {
 }
 
 table.lo07-list {
-  font-size: 1.3em;
+  font-size: 19px;
   width: 100%;
   font-weight: 300;
   padding: 0.5em;
@@ -163,4 +180,20 @@ table.lo07-list td {
 
 .lo07-list-primary {
   font-weight: 400;
+}
+
+.lo07-list-icon {
+  width: 1em;
+}
+
+table.lo07-list table.lo07-list {
+  padding-top: 0;
+  margin-top: -0.5em;
+  padding-right: 0;
+  width: calc(100% + 0.5em);
+}
+
+.lo07-text-icon {
+  vertical-align: middle;
+  padding-right: 0.3em;
 }

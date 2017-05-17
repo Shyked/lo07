@@ -24,9 +24,10 @@ class Etudiant {
 	 */
 	public static function createFromID($numero) {
 		global $pdo;
+		$class = __CLASS__;
   	$stmt = $pdo->prepare(<<<SQL
   		SELECT *
-  		FROM etudiant
+  		FROM {$class}
 			WHERE numero = :numero
 SQL
   	);
@@ -37,14 +38,15 @@ SQL
 		if (($object = $stmt->fetch()) !== false) {
     	return $object;
   	}
-  	throw new Exception(__CLASS__ . ' not found');
+  	throw new Exception("Cet étudiant n'existe pas");
  	}
 
  	public static function exists($numero) {
  		global $pdo;
+ 		$class = __CLASS__;
  		$stmt = $pdo->prepare(<<<SQL
  			SELECT numero
- 			FROM etudiant
+ 			FROM {$class}
  			WHERE numero = :numero
 SQL
 		);
@@ -73,6 +75,21 @@ SQL
 
 	public function getFiliere() {
 		return $this->filiere;
+	}
+
+	public function getCursus() {
+		$stmt = myPDO::getInstance()->prepare(<<<SQL
+      SELECT *
+      FROM cursus
+      WHERE numero_etudiant = :numero
+      ORDER BY nom, id
+SQL
+    );
+    $stmt->setFetchMode(PDO::FETCH_CLASS, 'Cursus');
+    $stmt->execute(array(
+    	'numero' => $this->numero
+    ));
+    return $stmt->fetchAll();
 	}
 
 	
@@ -143,8 +160,9 @@ SQL
 	 */
 	public static function createEtudiant($numero, $nom, $prenom, $admission, $filiere) {
 		global $pdo;
+		$class = __CLASS__;
 		$stmt = $pdo->prepare(<<<SQL
-			INSERT INTO Etudiant (numero, nom, prenom, admission, filiere)
+			INSERT INTO {$class} (numero, nom, prenom, admission, filiere)
 			VALUES (:numero, :nom, :prenom, :admission, :filiere)
 SQL
 		);
@@ -166,9 +184,10 @@ SQL
 	 * @return array Tableau de Etudiant
 	 */
 	public static function getAll() {
+		$class = __CLASS__;
 		$stmt = myPDO::getInstance()->prepare(<<<SQL
       SELECT *
-      FROM Etudiant
+      FROM {$class}
       ORDER BY numero
 SQL
     );

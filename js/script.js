@@ -72,23 +72,30 @@
           titles[i].innerHTML = this.pages[page].title;
         }
 
+        $("#page-body")[0].classList.add(this.classPrefix + 'body-loading');
+        var pagemanager = this;
+        var start = new Date();
+
         // Change body
         $.ajax("./query/pages/" + page + ".php", {
           dataType: "html",
           success: function(html) {
-            $("#page-body").html(html);
-            componentHandler.upgradeAllRegistered();
-            getmdlSelect.init('.getmdl-select');
-            $("#page-body form").each(function(id, element) {
-              $(element).ajaxForm(function(res) {
-                eval(element.getAttribute('data-onresponse')).call(element, res.response, res.error);
+            setTimeout(function() {
+              $("#page-body").html(html);
+              componentHandler.upgradeAllRegistered();
+              getmdlSelect.init('.getmdl-select');
+              $("#page-body form").each(function(id, element) {
+                $(element).ajaxForm(function(res) {
+                  eval(element.getAttribute('data-onresponse')).call(element, res.response, res.error);
+                });
+                element.submit = function(e) { };
               });
-              element.submit = function(e) { };
-            });
+              $("#page-body")[0].classList.remove(pagemanager.classPrefix + 'body-loading');
+            }, Math.max(parseFloat(window.getComputedStyle($('#page-body')[0]).transitionDuration.replace('s', '')) * 1000 - (new Date()).getTime() / 1000 + start.getTime() / 1000, 0));
           },
           error: function(res) {
             console.log(res);
-            alert("Une erreur est survenue lors de la récupération de la page");
+            swal("Oups...", "Une erreur est survenue lors de la récupération de la page", "error");
           }
         });
       }
@@ -133,20 +140,15 @@
       title: 'Gérer les étudiants',
       icon: 'person'
     },
-    ajouter: {
-      label: 'Ajouter',
-      title: 'Ajouter un nouveau cursus',
-      icon: 'library_add'
+    elements: {
+      label: 'El. de formation',
+      title: 'Gérer les éléments de formation',
+      icon: 'bubble_chart'
     },
-    visualiser: {
-      label: 'Visualiser',
-      title: 'Visualiser les cursus',
-      icon: 'list'
-    },
-    conformite: {
-      label: 'Conformité',
-      title: 'Vérifier la conformité des cursus',
-      icon: 'check'
+    cursus: {
+      label: 'Cursus',
+      title: 'Gérer les cursus',
+      icon: 'trending_up'
     },
     tests: {
       label: 'Tests',
