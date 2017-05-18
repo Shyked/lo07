@@ -196,4 +196,21 @@ table.lo07-list table.lo07-list {
 .lo07-text-icon {
   vertical-align: middle;
   padding-right: 0.3em;
+  margin-top: -0.15em;
+}
+
+.lo07-tooltip-container {
+  position: relative;
+}
+
+.lo07-tooltip-container .mdl-tooltip {
+  position: absolute;
+  top: -3px;
+  left: 100%;
+  white-space: nowrap;
+}
+
+.lo07-tooltip-container:hover .mdl-tooltip {
+  display: inline-block;
+  animation: pulse 200ms cubic-bezier(0,0,.2,1)forwards;
 }

@@ -108,12 +108,15 @@ echo <<<HTML
 
     var getElementRow = function(id, sigle, categorie, affectation, utt) {
       var tr = document.createElement('tr');
-      // var color = getColorFromString(categorie);
+      var color = getColorFromString(categorie);
       tr.innerHTML = '\
-        <td class="lo07-list-primary">' + sigle + '</td>\
+        <td class="lo07-list-primary">'
+          + '<i class="material-icons lo07-text-icon" style="color: ' + color + ';">fiber_manual_record</i>'
+          + sigle
+          + (utt && utt !== "0" ? '' : ' <span class="lo07-tooltip-container"><div class="material-icons lo07-text-icon" style="color: #888;" id="lo07-utt-' + id + '">directions_car</div><div class="mdl-tooltip">Se suit hors UTT</div></span>')
+        + '</td>\
         <td>' + categorie + '</td>\
         <td>' + affectation + '</td>\
-        <td>' + (utt && utt != "0" ? "à l'UTT" : "") + '</td>\
         <td class="lo07-list-right lo07-list-icon"><a class="mdl-list__item-primary-action lo07-lightgrey lo07-hover-yellow lo07-transition-faster" onclick="editObject(' + id + ');"><i class="material-icons">edit</i></a></td>\
         <td class="lo07-list-right lo07-list-icon"><a class="mdl-list__item-secondary-action lo07-lightgrey lo07-hover-red lo07-transition-faster" onclick="deleteObject(' + id + ');"><i class="material-icons">delete</i></a></td>\
       ';
@@ -180,7 +183,9 @@ echo <<<HTML
             updateInput(form.sigle, element.sigle);
             updateInput(form.categorie, element.categorie);
             updateInput(form.affectation, element.affectation);
-            updateInput(form.utt, element.utt);
+            // updateInput(form.utt, element.utt);
+            if (element.utt && element.utt !== "0") form.utt.parentElement.MaterialCheckbox.check();
+            else form.utt.parentElement.MaterialCheckbox.uncheck();
             form.id.setAttribute('readonly', 'readonly');
           }
         },
@@ -205,7 +210,7 @@ echo <<<HTML
       updateInput(form.sigle, '');
       updateInput(form.categorie, '');
       updateInput(form.affectation, '');
-      updateInput(form.utt, '');
+      form.utt.parentElement.MaterialCheckbox.check();
       form.id.removeAttribute('readonly');
       return false;
     };
@@ -224,7 +229,8 @@ echo <<<HTML
     var getColorFromString = function(str) {
       var nameSum = 0;
       for (var idS in str) nameSum += str.charCodeAt(idS);
-      return 'hsl(' + Math.floor(nameSum % 360) + ', ' + Math.floor(40 + (nameSum * 10) % 30) + '%, 65%)';
+      var nameSum2 = nameSum + str.charCodeAt(0);
+      return 'hsl(' + Math.floor(nameSum * 40 % 360) + ', ' + Math.floor(30 + (nameSum2 * 20) % 60) + '%, ' + Math.floor(55 + (nameSum2 * 10) % 20) + '%)';
     };
 
     refreshList();

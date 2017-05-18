@@ -43,7 +43,6 @@ try {
     }
     else {
       $result['error'] = "Merci de compléter tous les champs ci-dessus";
-      var_dump($_POST);
     }
   }
 
