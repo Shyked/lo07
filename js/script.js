@@ -6,6 +6,7 @@
     this.currentPage = null;
     this.classPrefix = 'pagemanager-';
     this.pageParam = 'display';
+    this.idParam = 'id';
     this.siteName = document.title;
 
 
@@ -37,10 +38,22 @@
     this._initEvents = function() {
       var pageManager = this;
       window.addEventListener('click', function(e) {
-        if (e.target.localName == 'a') {
-          var urlAction = getURLParams(pageManager.pageParam, e.target.getAttribute('href'));
+        var hasA = false;
+        var count = 5;
+        var id = null;
+        for (id in e.path) {
+          if (e.path[id].localName == 'a') {
+            hasA = true;
+            break;
+          }
+          count--;
+          if (count <= 0) break;
+        }
+        if (hasA) {
+          var urlAction = getURLParams(pageManager.pageParam, e.path[id].getAttribute('href'));
+          var urlId = getURLParams(pageManager.idParam, e.path[id].getAttribute('href'));
           if (urlAction != null) {
-            pageManager.setCurrentPage(urlAction);
+            pageManager.setCurrentPage(urlAction, urlId);
             e.preventDefault();
             return false;
           }
@@ -49,12 +62,15 @@
     };
 
 
-    this.setCurrentPage = function(page) {
+    this.setCurrentPage = function(page, urlId) {
       console.info('Goto ' + page);
       if (this.pages[page]) {
         // Change page URL
         var params = getURLParams();
+        delete params[this.pageParam];
+        delete params[this.idParam];
         params[this.pageParam] = page;
+        if (urlId) params[this.idParam] = urlId;
         var paramsStr = '';
         for (var id in params) {
           if (paramsStr == '') paramsStr += '?' + id + '=' + params[id];
@@ -77,7 +93,7 @@
         var start = new Date();
 
         // Change body
-        $.ajax("./query/pages/" + page + ".php", {
+        $.ajax("./query/pages/" + page + ".php" + paramsStr, {
           dataType: "html",
           success: function(html) {
             setTimeout(function() {

@@ -4,7 +4,6 @@ require_once "../classes/Components.class.php";
 
 
 
-
 $inputId = Components::hidden("id");
 $inputSigle = Components::text("sigle", "Sigle");
 $inputCategorie = Components::select("categorie", "Catégorie", array(

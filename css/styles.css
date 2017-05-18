@@ -159,6 +159,10 @@ a {
   color: #ffcc55;
 }
 
+.lo07-hover-blue:hover {
+  color: #4C7AD8;
+}
+
 .lo07-transition-faster {
   transition-duration: 150ms;
 }
