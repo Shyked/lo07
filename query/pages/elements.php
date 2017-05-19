@@ -16,12 +16,12 @@ $inputCategorie = Components::select("categorie", "Catégorie", array(
   "SE",
   "HP",
   "NPML"
-), null);
+));
 $inputAffectation = Components::select("affectation", "Affectation", array(
   "TC",
   "TCBR",
   "FCBR"
-), null);
+));
 $inputUtt = Components::checkbox("utt", "Se suit à l'UTT", true);
 
 

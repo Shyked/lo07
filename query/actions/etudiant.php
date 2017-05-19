@@ -35,6 +35,20 @@ try {
     }
   }
 
+  else if ($action == 'search') {
+    if (isset($_POST['q'])) {
+      $etudiants = Etudiant::search($_POST['q']);
+      $etudiantsExport = array();
+      foreach ($etudiants as $key => $etudiant) {
+        array_push($etudiantsExport, $etudiant->export());
+      }
+      $result['response'] = $etudiantsExport;
+    }
+    else {
+      $result['error'] = "Missing parameter";
+    }
+  }
+
   else if ($action == 'add') {
     if (requireParams('numero', 'nom', 'prenom', 'admission', 'filiere')) {
       if (Etudiant::exists($_POST['numero'])) $result['error'] = "Ce numéro est déjà associé à un étudiant";

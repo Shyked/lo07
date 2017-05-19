@@ -13,14 +13,14 @@ $inputPrenom = Components::text("prenom", "Prenom");
 $inputAdmission = Components::select("admission", "Admission", array(
   "TC",
   "BR"
-), null);
+));
 $inputFiliere = Components::select("filiere", "Filière", array(
   "?",
   "MPL",
   "MSI",
   "MRI",
   "LIB"
-), "");
+));
 
 
 
@@ -208,8 +208,13 @@ echo <<<HTML
     };
 
 
-    var updateInput = function(input, value) {
-      input.value = value;
+    var updateInput = function(input, value, displayedValue) {
+      if (input.parentElement.classList.contains('getmdl-select')) {
+        if (typeof displayedValue == 'undefined') displayedValue = value;
+        input.value = displayedValue;
+        input.setAttribute('data-val', value);
+      }
+      else input.value = value;
       if (value.toString().length > 0) {
         input.parentElement.classList.add('is-dirty');
       }

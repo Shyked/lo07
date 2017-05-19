@@ -16,6 +16,17 @@ class Components {
 HTML;
 	}
 
+	public static function textWithIcon($name, $label, $icon, $default = '') {
+		$id = self::getComponentId('text');
+		return <<<HTML
+		  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label lo07-input-with-icon">
+		 	  <i class="material-icons">search</i>
+		    <input class="mdl-textfield__input" type="text" name="{$name}" id="{$id}" value="{$default}" />
+		    <label class="mdl-textfield__label" for="{$id}">{$label}</label>
+		  </div>
+HTML;
+	}
+
 	public static function number($name, $label, $default = '') {
 		$id = self::getComponentId('number');
 		return <<<HTML
@@ -37,14 +48,15 @@ HTML;
 HTML;
 	}
 
-	public static function select($name, $label, $list, $default = '') {
+	public static function select($name, $label, $list, $fullwidth = false, $default = '') {
 		$id = self::getComponentId('select');
 		$list_html = "";
+		$width = $fullwidth ? "getmdl-select__fullwidth" : "getmdl-select__fix-height";
 		foreach ($list as $key => $val) {
 			$list_html .= "<li class='mdl-menu__item'>{$val}</li>";
 		}
 		return <<<HTML
-			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select {$width}">
 			    <input class="mdl-textfield__input" type="text" name="{$name}" id="{$id}" value="{$default}" readonly tabIndex="-1" />
 			    <label for="{$id}">
 			        <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>

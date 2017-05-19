@@ -22,7 +22,9 @@ else {
 
 
   $inputId = Components::hidden("id");
-  $inputNumEtu = Components::number("numero_etudiant", "Numéro étudiant");
+  $inputEtuSearch = Components::textWithIcon("etu_search", "Rechercher un étudiant", 'search');
+  // $inputNumEtu = Components::number("numero_etudiant", "Numéro étudiant");
+  $inputNumEtu = Components::select("numero_etudiant", "Numéro étudiant", array(), true);
   $inputNomCursus = Components::text("nom", "Nom du cursus");
 
 
@@ -50,6 +52,7 @@ else {
       <div class="lo07-card-body">
         <form id="lo07-form-add" method='post' action='query/actions/cursus.php?action=add' data-onresponse="formResponse">
           {$inputId}
+          <div>{$inputEtuSearch}</div>
           <div>{$inputNumEtu}</div>
           <div>{$inputNomCursus}</div>
           <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect lo07-only-edit lo07-button-submit lo07-button-cancel" onclick="return resetForm();">Annuler</button>
@@ -229,9 +232,59 @@ else {
         return false;
       };
 
+      var fillSelect = function() {
+        var form = $('#lo07-form-add')[0];
+        var search = form.etu_search.value;
+        $.ajax("./query/actions/etudiant.php?action=search", {
+          type: 'post',
+          data: 'q=' + search,
+          dataType: "json",
+          success: function(result) {
+            if (result.error) {
+              this.error();
+            }
+            else {
+              console.log(result.response);
+              var list = {};
+              for (var id in result.response) {
+                list[result.response[id].numero] = result.response[id].numero + ' ' + result.response[id].prenom + ' ' + result.response[id].nom;
+              }
+              updateSelect(form.numero_etudiant, list, search.length > 0);
+            }
+          },
+          error: function(res) {
+            swal("Oups...", "Une erreur est survenue !", "error");
+          }
+        });
+      };
 
-      var updateInput = function(input, value) {
-        input.value = value;
+      var updateSelect = function(select, values, pickFirst) {
+        var list = select.parentElement.getElementsByClassName('mdl-menu')[0];
+        list.innerHTML = '';
+        for (var id in values) {
+          var li = document.createElement('li');
+          li.className = 'mdl-menu__item';
+          li.setAttribute('data-val', id);
+          li.innerHTML = values[id];
+          list.appendChild(li);
+        }
+        getmdlSelect.init('.getmdl-select');
+        if (pickFirst && Object.keys(values)[0]) {
+          updateInput(select, Object.keys(values)[0], values[Object.keys(values)[0]]);
+        }
+        else {
+          updateInput(select, '', '');
+        }
+      };
+
+
+      var updateInput = function(input, value, realValue) {
+        if (input.parentElement.classList.contains('getmdl-select')) {
+          if (typeof realValue == 'undefined') realValue = value;
+          input.value = realValue;
+          input.setAttribute('data-val', value);
+        }
+        else input.value = value;
         if (value.toString().length > 0) {
           input.parentElement.classList.add('is-dirty');
         }
@@ -247,6 +300,10 @@ else {
       };
 
       refreshList();
+
+      $('#lo07-form-add')[0].etu_search.addEventListener('change', fillSelect);
+      $('#lo07-form-add')[0].etu_search.addEventListener('keyup', fillSelect);
+      fillSelect();
     </script>
 
 HTML;
