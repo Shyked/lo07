@@ -207,28 +207,6 @@ echo <<<HTML
       return false;
     };
 
-
-    var updateInput = function(input, value, displayedValue) {
-      if (input.parentElement.classList.contains('getmdl-select')) {
-        if (typeof displayedValue == 'undefined') displayedValue = value;
-        input.value = displayedValue;
-        input.setAttribute('data-val', value);
-      }
-      else input.value = value;
-      if (value.toString().length > 0) {
-        input.parentElement.classList.add('is-dirty');
-      }
-      else {
-        input.parentElement.classList.remove('is-dirty');
-      }
-    };
-
-    var getColorFromString = function(str) {
-      var nameSum = 0;
-      for (var idS in str) nameSum += str.charCodeAt(idS);
-      return 'hsl(' + Math.floor(nameSum % 360) + ', ' + Math.floor(40 + (nameSum * 10) % 30) + '%, 65%)';
-    };
-
     refreshList();
   </script>
 

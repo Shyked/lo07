@@ -214,24 +214,6 @@ echo <<<HTML
       return false;
     };
 
-
-    var updateInput = function(input, value) {
-      input.value = value;
-      if (value.toString().length > 0) {
-        input.parentElement.classList.add('is-dirty');
-      }
-      else {
-        input.parentElement.classList.remove('is-dirty');
-      }
-    };
-
-    var getColorFromString = function(str) {
-      var nameSum = 0;
-      for (var idS in str) nameSum += str.charCodeAt(idS);
-      var nameSum2 = nameSum + str.charCodeAt(0);
-      return 'hsl(' + Math.floor(nameSum * 40 % 360) + ', ' + Math.floor(30 + (nameSum2 * 20) % 60) + '%, ' + Math.floor(55 + (nameSum2 * 10) % 20) + '%)';
-    };
-
     refreshList();
   </script>
 
