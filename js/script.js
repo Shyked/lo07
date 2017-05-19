@@ -53,16 +53,23 @@
           var urlAction = getURLParams(pageManager.pageParam, e.path[id].getAttribute('href'));
           var urlId = getURLParams(pageManager.idParam, e.path[id].getAttribute('href'));
           if (urlAction != null) {
-            pageManager.setCurrentPage(urlAction, urlId);
+            pageManager.setCurrentPage(urlAction, urlId, true);
             e.preventDefault();
             return false;
           }
         }
       });
+      window.addEventListener('popstate', function() {
+        var urlAction = getURLParams(pageManager.pageParam, document.location.href);
+        var urlId = getURLParams(pageManager.idParam, document.location.href);
+        if (urlAction != null) {
+          pageManager.setCurrentPage(urlAction, urlId, false);
+        }
+      });
     };
 
 
-    this.setCurrentPage = function(page, urlId) {
+    this.setCurrentPage = function(page, urlId, pushState) {
       console.info('Goto ' + page);
       if (this.pages[page]) {
         // Change page URL
@@ -76,7 +83,7 @@
           if (paramsStr == '') paramsStr += '?' + id + '=' + params[id];
           else paramsStr += '&' + id + '=' + params[id];
         }
-        window.history.pushState(null, this.pages[page].title, window.location.href.split('?')[0] + ((Object.keys(this.pages)[0] == page) ? '' : paramsStr));
+        if (pushState) window.history.pushState(null, this.pages[page].title, window.location.href.split('?')[0] + ((Object.keys(this.pages)[0] == page) ? '' : paramsStr));
         document.title = this.siteName + ' - ' + this.pages[page].title;
 
         // Store current page
