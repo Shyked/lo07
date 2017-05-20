@@ -4,25 +4,44 @@ require_once "../classes/Components.class.php";
 
 
 
-$inputId = Components::hidden("id");
-$inputSigle = Components::text("sigle", "Sigle");
-$inputCategorie = Components::select("categorie", "Catégorie", array(
-  "CS",
-  "TM",
-  "EC",
-  "HT",
-  "ME",
-  "ST",
-  "SE",
-  "HP",
-  "NPML"
+$inputId = Components::hidden(array(
+  "name" => "id"
 ));
-$inputAffectation = Components::select("affectation", "Affectation", array(
-  "TC",
-  "TCBR",
-  "FCBR"
+$inputSigle = Components::text(array(
+  "name" => "sigle",
+  "label" => "Sigle"
 ));
-$inputUtt = Components::checkbox("utt", "Se suit à l'UTT", true);
+$inputCategorie = Components::select(array(
+  "name" => "categorie",
+  "label" => "Catégorie",
+  "list" => array(
+    "CS",
+    "TM",
+    "EC",
+    "HT",
+    "ME",
+    "ST",
+    "SE",
+    "HP",
+    "NPML"
+  )
+));
+$inputAffectation = Components::select(array(
+  "name" => "affectation",
+  "label" => "Affectation",
+  "list" => array(
+    "TC",
+    "BR",
+    "TCBR",
+    "FCBR",
+    "UTT"
+  )
+));
+$inputUtt = Components::checkbox(array(
+  "name" => "utt",
+  "label" => "Se suit à l'UTT",
+  "checked" => true
+));
 
 
 
@@ -47,12 +66,13 @@ echo <<<HTML
     </div>
 
     <div class="lo07-card-body">
-      <form id="lo07-form-add" method='post' action='query/actions/element.php?action=add' data-onresponse="formResponse">
+      <form id="lo07-form-add" method='post' action='query/actions/element.php?action=add' data-onresponse="formResponse" onsubmit="return false;">
         {$inputId}
         <div>{$inputSigle}</div>
         <div>{$inputCategorie}</div>
         <div>{$inputAffectation}</div>
         <div class="lo07-checkbox-block">{$inputUtt}</div>
+        <button class="hidden" onclick="this.form.submit();"></button>
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect lo07-only-edit lo07-button-submit lo07-button-cancel" onclick="return resetForm();">Annuler</button>
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent lo07-button lo07-button-submit" onclick="this.form.submit();"><span id="lo07-button-add-label">Ajouter</span></button>
         <div class='lo07-form-notice lo07-red'></div>

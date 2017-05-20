@@ -27,8 +27,9 @@
 
     this._initCurrentPage = function() {
       var page = getURLParams(this.pageParam);
+      var id = getURLParams(this.idParam);
       if (this.pages[page]) {
-        this.setCurrentPage(page);
+        this.setCurrentPage(page, id);
       }
       else {
         this.setCurrentPage(Object.keys(this.pages)[0]);
@@ -40,18 +41,18 @@
       window.addEventListener('click', function(e) {
         var hasA = false;
         var count = 5;
-        var id = null;
-        for (id in e.path) {
-          if (e.path[id].localName == 'a') {
+        var el = e.target;
+        do {
+          if (el.localName == 'a') {
             hasA = true;
             break;
           }
           count--;
           if (count <= 0) break;
-        }
-        if (hasA) {
-          var urlAction = getURLParams(pageManager.pageParam, e.path[id].getAttribute('href'));
-          var urlId = getURLParams(pageManager.idParam, e.path[id].getAttribute('href'));
+        } while (el = el.parentElement)
+        if (hasA && el.getAttribute('href')) {
+          var urlAction = getURLParams(pageManager.pageParam, el.getAttribute('href'));
+          var urlId = getURLParams(pageManager.idParam, el.getAttribute('href'));
           if (urlAction != null) {
             pageManager.setCurrentPage(urlAction, urlId, true);
             e.preventDefault();
@@ -108,10 +109,24 @@
               componentHandler.upgradeAllRegistered();
               getmdlSelect.init('.getmdl-select');
               $("#page-body form").each(function(id, element) {
-                $(element).ajaxForm(function(res) {
-                  eval(element.getAttribute('data-onresponse')).call(element, res.response, res.error);
-                });
-                element.submit = function(e) { };
+                element.submit = function() {
+                  var data = $(this).serializeArray().reduce(function(obj, item) {
+                    obj[item.name] = item.value;
+                    return obj;
+                  }, {});
+                  var selects = this.getElementsByClassName('getmdl-select');
+                  $(selects).each(function(id, select) {
+                    var input = select.getElementsByTagName('input')[0];
+                    data[input.name] = input.getAttribute('data-val');
+                  });
+                  $(this).ajaxSubmit({
+                    'data': data,
+                    'success': function(res) {
+                      eval(element.getAttribute('data-onresponse')).call(element, res.response, res.error);
+                    }
+                  });
+                  return false;
+                };
               });
               $("#page-body")[0].classList.remove(pagemanager.classPrefix + 'body-loading');
             }, Math.max(parseFloat(window.getComputedStyle($('#page-body')[0]).transitionDuration.replace('s', '')) * 1000 - (new Date()).getTime() / 1000 + start.getTime() / 1000, 0));
@@ -125,7 +140,10 @@
     };
 
 
-    this._init();
+    var pm = this;
+    window.addEventListener('load', function() {
+      pm._init();
+    });
 
   };
 

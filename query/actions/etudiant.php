@@ -7,7 +7,7 @@ function requireParams() {
   $arguments = func_get_args();
   $areAllSet = true;
   foreach ($arguments as $key => $param) {
-    if (empty($_POST[$param])) $areAllSet = false;
+    if (!isset($_POST[$param]) || $_POST[$param] == '') $areAllSet = false;
   }
   return $areAllSet;
 }

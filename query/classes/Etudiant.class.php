@@ -1,6 +1,7 @@
 <?php
 
 require_once '../myPDO.include.php';
+require_once '../classes/Cursus.class.php';
 
 class Etudiant {
 	private $numero = null;
@@ -12,6 +13,10 @@ class Etudiant {
 	private $admission = null;
 
 	private $filiere = null;
+
+	private static $dependencies = array(
+		"Cursus" => "numero_etudiant"
+	);
 
 	/** 
 	 * createFromID
@@ -143,6 +148,22 @@ SQL
 	}
 	
 	public function deleteDependencies() {
+		foreach (self::$dependencies as $class => $attr) {
+			$stmt = myPDO::getInstance()->prepare(<<<SQL
+	      SELECT *
+	      FROM {$class}
+	      WHERE {$attr} = :numero
+SQL
+	    );
+	    $stmt->setFetchMode(PDO::FETCH_CLASS, $class);
+	    $stmt->execute(array(
+	    	"numero" => $this->numero
+	    ));
+	    $objects = $stmt->fetchAll();
+	    foreach ($objects as $key => $obj) {
+	    	$obj->delete();
+	    }
+	  }
 	}
 
 	/** 
@@ -201,7 +222,6 @@ SQL
 		$qSQL = '';
 		foreach ($qArray as $key => $word) {
 			$qArray['param' . $key] = '%' . $qArray[$key] . '%';
-			// AND (numero LIKE :{$key} OR prenom LIKE :{$key} OR nom LIKE :{$key})
 			$qSQL .= <<<SQL
 				AND (numero LIKE :param{$key} OR LOWER(prenom) LIKE LOWER(:param{$key}) OR LOWER(nom) LIKE LOWER(:param{$key}))
 SQL;

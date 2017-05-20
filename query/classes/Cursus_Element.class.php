@@ -1,21 +1,25 @@
 <?php
 
 require_once '../myPDO.include.php';
-require_once '../classes/Cursus_Element.class.php';
 
-class Element {
+class Cursus_Element {
   private $id = null;
-  
-  private $sigle = null;
-  
-  private $categorie = null;
-  
-  private $affectation = null;
 
-  private $utt = null;
+  private $id_cursus = null;
+
+  private $id_element = null;
+
+  private $sem_seq = null;
+
+  private $sem_label = null;
+
+  private $profil = null;
+
+  private $credit = null;
+
+  private $resultat = null;
 
   private static $dependencies = array(
-    "Cursus_Element" => "id_element"
   );
 
 
@@ -35,7 +39,7 @@ SQL
     if (($object = $stmt->fetch()) !== false) {
       return $object;
     }
-    throw new Exception("Cet élément de formation n'existe pas");
+    throw new Exception("Cet élément du cursus n'existe pas");
   }
 
   public static function exists($id) {
@@ -58,37 +62,67 @@ SQL
     return $this->id;
   }
   
-  public function getSigle() {
-    return $this->sigle;
-  }
-  
-  public function getCategorie() {
-    return $this->categorie;
-  }
-  
-  public function getAffectation() {
-    return $this->affectation;
+  public function getIdCursus() {
+    return $this->id_cursus;
   }
 
-  public function getUtt() {
-    return $this->utt;
+  public function getIdElement() {
+    return $this->id_element;
+  }
+
+  public function getSemSeq() {
+    return $this->sem_seq;
+  }
+
+  public function getSemLabel() {
+    return $this->sem_label;
+  }
+
+  public function getProfil() {
+    return $this->profil;
+  }
+
+  public function getCredit() {
+    return $this->credit;
+  }
+
+  public function getResultat() {
+    return $this->resultat;
   }
 
   
-  public function setSigle($sigle) {
-    $this->set('sigle', $sigle);
+  public function setIdCursus($id_cursus) {
+    if (!Cursus::exists($id_cursus)) {
+      throw new Exception("Ce cursus n'existe pas");
+    }
+    $this->set('id_cursus', $id_cursus);
   }
-  
-  public function setCategorie($categorie) {
-    $this->set('categorie', $categorie);
+
+  public function setIdElement($id_element) {
+    if (!Element::exists($id_element)) {
+      throw new Exception("Cet élément de formation n'existe pas");
+    }
+    $this->set('id_element', $id_element);
   }
-  
-  public function setAffectation($affectation) {
-    $this->set('affectation', $affectation);
+
+  public function setSemSeq($sem_seq) {
+    $this->set('sem_seq', $sem_seq);
   }
-  
-  public function setUtt($utt) {
-    $this->set('utt', $utt);
+
+  public function setSemLabel($sem_label) {
+    $this->set('sem_label', $sem_label);
+  }
+
+  public function setProfil($profil) {
+    $this->set('profil', $profil);
+  }
+
+  public function setCredit($credit) {
+    $this->set('credit', $credit);
+  }
+
+  public function setResultat($resultat) {
+    $this->set('resultat', $resultat);
   }
 
   private function set($attr, $value) {
@@ -143,58 +177,42 @@ SQL
     }
   }
 
-  public static function createElement($sigle, $categorie, $affectation, $utt) {
+  public static function createCursusElement($id_cursus, $id_element, $sem_seq, $sem_label, $profil, $credit, $resultat) {
     global $pdo;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      INSERT INTO {$class} (sigle, categorie, affectation, utt)
-      VALUES (:sigle, :categorie, :affectation, :utt)
+      INSERT INTO {$class} (id_cursus, id_element, sem_seq, sem_label, profil, credit, resultat)
+      VALUES (:id_cursus, :id_element, :sem_seq, :sem_label, :profil, :credit, :resultat)
 SQL
     );
     $stmt->execute(array(
-      "sigle" => $sigle,
-      "categorie" => $categorie,
-      "affectation" => $affectation,
-      "utt" => $utt
+      "id_cursus" => $id_cursus,
+      "id_element" => $id_element,
+      "sem_seq" => $sem_seq,
+      "sem_label" => $sem_label,
+      "profil" => $profil,
+      "credit" => $credit,
+      "resultat" => $resultat
     ));
     return self::createFromID($pdo->lastInsertId());
   }
   
-  public static function getAll() {
-    $class = __CLASS__;
-    $stmt = myPDO::getInstance()->prepare(<<<SQL
-      SELECT *
-      FROM {$class}
-      ORDER BY sigle
-SQL
-    );
-    $stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
-    $stmt->execute();
-    return $stmt->fetchAll();
-  }
 
-  public static function search($q) {
-    $qArray = explode(' ', $q);
-    $qSQL = '';
-    foreach ($qArray as $key => $word) {
-      $qArray['param' . $key] = '%' . $qArray[$key] . '%';
-      $qSQL .= <<<SQL
-        AND (LOWER(sigle) LIKE LOWER(:param{$key}))
-SQL;
-      unset($qArray[$key]);
-    }
-    $qSQL = preg_replace('/AND /', '', $qSQL);
+  public static function getAll($id_cursus = null) {
     $class = __CLASS__;
+    $where = $id_cursus ? 'WHERE id_cursus = :id_cursus' : '';
     $stmt = myPDO::getInstance()->prepare(<<<SQL
       SELECT *
       FROM {$class}
-      WHERE {$qSQL}
-      ORDER BY sigle
-      LIMIT 10;
+      {$where}
+      ORDER BY id_cursus, sem_seq, id_element, id
 SQL
     );
     $stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
-    $stmt->execute($qArray);
+    if ($id_cursus) $stmt->execute(array(
+      "id_cursus" => $id_cursus
+    ));
+    else $stmt->execute();
     return $stmt->fetchAll();
   }
 

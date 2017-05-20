@@ -4,26 +4,51 @@ require_once "../classes/Components.class.php";
 
 
 
-$checkbox1 = Components::checkbox("name-checkbox1", "Checkbox label", true);
-$checkbox2 = Components::checkbox("name-checkbox2", "Checkbox label");
+$checkbox1 = Components::checkbox(array(
+  "name" => "name-checkbox1",
+  "label" => "Checkbox label",
+  "checked" => true
+));
+$checkbox2 = Components::checkbox(array(
+  "name" => "name-checkbox2",
+  "label" => "Checkbox label"
+));
 
-$radios = Components::radios("name-radios", array(
-  "1" => "One",
-  "2" => "Two",
-  "3" => "Three"
-), "3");
+$radios = Components::radios(array(
+  "name" => "name-radios",
+  "list" => array(
+    "1" => "One",
+    "2" => "Two",
+    "3" => "Three"
+  ),
+  "default" => "3"
+));
 
-$select = Components::select("name-select", "Label", array(
-  "One",
-  "Two",
-  "Three",
-  "Four"
-), "");
+$select = Components::select(array(
+  "name" => "name-select",
+  "label" => "Label",
+  "list" => array(
+    "One",
+    "Two",
+    "Three",
+    "Four"
+  ),
+  "default" => ""
+));
 
-$text = Components::text("name-text", "Texte");
-$number = Components::number("name-number", "Nombre");
+$text = Components::text(array(
+  "name" => "name-text",
+  "label" => "Texte"
+));
+$number = Components::number(array(
+  "name" => "name-number",
+  "label" => "Nombre"
+));
 
-$textarea = Components::textarea("name-textarea", "Long texte");
+$textarea = Components::textarea(array(
+  "name" => "name-textarea",
+  "label" => "Long texte"
+));
 
 
 

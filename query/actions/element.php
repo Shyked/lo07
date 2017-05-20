@@ -7,7 +7,7 @@ function requireParams() {
   $arguments = func_get_args();
   $areAllSet = true;
   foreach ($arguments as $key => $param) {
-    if (empty($_POST[$param])) $areAllSet = false;
+    if (!isset($_POST[$param]) || $_POST[$param] == '') $areAllSet = false;
   }
   return $areAllSet;
 }
@@ -34,6 +34,20 @@ try {
         array_push($elementsExport, $element->export());
       }
       $result['response'] = $elementsExport;
+    }
+  }
+
+  else if ($action == 'search') {
+    if (isset($_POST['q'])) {
+      $elements = Element::search($_POST['q']);
+      $elementsExport = array();
+      foreach ($elements as $key => $element) {
+        array_push($elementsExport, $element->export());
+      }
+      $result['response'] = $elementsExport;
+    }
+    else {
+      $result['error'] = "Missing parameter";
     }
   }
 

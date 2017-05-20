@@ -6,58 +6,88 @@ class Components {
 
 	private static $component_count = 0;
 
-	public static function text($name, $label, $default = '') {
+	public static function text($params) {
+		$name = $params['name'];
+		$label = $params['label'];
+		$required = isset($params['required']) ? $params['required'] : false;
+		$default = isset($params['default']) ? $params['default'] : '';
 		$id = self::getComponentId('text');
+		$required = $required ? ' required' : '';
 		return <<<HTML
 		  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-		    <input class="mdl-textfield__input" type="text" name="{$name}" id="{$id}" value="{$default}" />
+		    <input class="mdl-textfield__input" type="text" name="{$name}" id="{$id}" value="{$default}"{$required} />
 		    <label class="mdl-textfield__label" for="{$id}">{$label}</label>
 		  </div>
 HTML;
 	}
 
-	public static function textWithIcon($name, $label, $icon, $default = '') {
+	public static function textWithIcon($params) {
+		$name = $params['name'];
+		$label = $params['label'];
+		$icon = $params['icon'];
+		$required = isset($params['required']) ? $params['required'] : false;
+		$default = isset($params['default']) ? $params['default'] : '';
 		$id = self::getComponentId('text');
+		$required = $required ? ' required' : '';
 		return <<<HTML
 		  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label lo07-input-with-icon">
 		 	  <i class="material-icons">search</i>
-		    <input class="mdl-textfield__input" type="text" name="{$name}" id="{$id}" value="{$default}" />
+		    <input class="mdl-textfield__input" type="text" name="{$name}" id="{$id}" value="{$default}"{$required} />
 		    <label class="mdl-textfield__label" for="{$id}">{$label}</label>
 		  </div>
 HTML;
 	}
 
-	public static function number($name, $label, $default = '') {
+	public static function number($params) {
+		$name = $params['name'];
+		$label = $params['label'];
+		$required = isset($params['required']) ? $params['required'] : false;
+		$default = isset($params['default']) ? $params['default'] : '';
 		$id = self::getComponentId('number');
+		$required = $required ? ' required' : '';
 		return <<<HTML
 		  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-		    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" name="{$name}" id="{$id}" value="{$default}" />
+		    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" name="{$name}" id="{$id}" value="{$default}"{$required} />
 		    <label class="mdl-textfield__label" for="{$id}">{$label}</label>
 		    <span class="mdl-textfield__error"></span>
 		  </div>
 HTML;
 	}
 
-	public static function textarea($name, $label, $size = 5, $default = '') {
+	public static function textarea($params) {
+		$name = $params['name'];
+		$label = $params['label'];
+		$size = isset($params['size']) ? $params['size'] : 5;
+		$required = isset($params['required']) ? $params['required'] : false;
+		$default = isset($params['default']) ? $params['default'] : '';
 		$id = self::getComponentId('textarea');
+		$required = $required ? ' required' : '';
 		return <<<HTML
 		  <div class="mdl-textfield mdl-js-textfield">
-		    <textarea class="mdl-textfield__input" type="text" rows="{$size}" name="{$name}" id="{$id}">{$default}</textarea>
+		    <textarea class="mdl-textfield__input" type="text" rows="{$size}" name="{$name}" id="{$id}"{$required}>{$default}</textarea>
 		    <label class="mdl-textfield__label" for="{$id}">{$label}</label>
 		  </div>
 HTML;
 	}
 
-	public static function select($name, $label, $list, $fullwidth = false, $default = '') {
+	public static function select($params) {
+		$name = $params['name'];
+		$label = $params['label'];
+		$list = $params['list'];
+		$fullwidth = isset($params['fullwidth']) ? $params['fullwidth'] : false;
+		$required = isset($params['required']) ? $params['required'] : false;
+		$default = isset($params['default']) ? $params['default'] : '';
 		$id = self::getComponentId('select');
+		$required = $required ? ' required' : '';
 		$list_html = "";
 		$width = $fullwidth ? "getmdl-select__fullwidth" : "getmdl-select__fix-height";
 		foreach ($list as $key => $val) {
-			$list_html .= "<li class='mdl-menu__item'>{$val}</li>";
+			$value = is_numeric($key) ? $val : $key;
+			$list_html .= "<li class='mdl-menu__item' data-val='{$value}'>{$val}</li>";
 		}
 		return <<<HTML
 			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select {$width}">
-			    <input class="mdl-textfield__input" type="text" name="{$name}" id="{$id}" value="{$default}" readonly tabIndex="-1" />
+			    <input class="mdl-textfield__input" type="text" name="{$name}" id="{$id}" value="{$default}" readonly tabIndex="-1"{$required} />
 			    <label for="{$id}">
 			        <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
 			    </label>
@@ -69,7 +99,10 @@ HTML;
 HTML;
 	}
 
-	public static function checkbox($name, $label, $checked = false) {
+	public static function checkbox($params) {
+		$name = $params['name'];
+		$label = $params['label'];
+		$checked = isset($params['checked']) ? $params['checked'] : '';
 		$id = self::getComponentId('checkbox');
 		$checked = $checked ? ' checked' : '';
 		return <<<HTML
@@ -80,14 +113,19 @@ HTML;
 HTML;
 	}
 
-	public static function radios($name, $list, $default = '') {
+	public static function radios($params) {
+		$name = $params['name'];
+		$list = $params['list'];
+		$required = isset($params['required']) ? $params['required'] : false;
+		$default = isset($params['default']) ? $params['default'] : '';
+		$required = $required ? ' required' : '';
 		$html = "";
 		foreach ($list as $value => $label) {
 			$id = self::getComponentId('radio');
 			$checked = $value == $default ? ' checked' : '';
 			$html .= <<<HTML
 				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-cell--12-col-phone lo07-radio" for="{$id}">
-				  <input type="radio" id="{$id}" class="mdl-radio__button" name="{$name}" value="{$value}"{$checked} />
+				  <input type="radio" id="{$id}" class="mdl-radio__button" name="{$name}" value="{$value}"{$checked}{$required} />
 				  <span class="mdl-radio__label">{$label}</span>
 				</label>
 HTML;
@@ -95,7 +133,9 @@ HTML;
 		return $html;
 	}
 
-	public static function hidden($name, $default = '') {
+	public static function hidden($params) {
+		$name = $params['name'];
+		$default = isset($params['default']) ? $params['default'] : '';
 		$id = self::getComponentId('hidden');
 		return <<<HTML
 			<input name="{$name}" type="hidden" value="{$default}" id="{$id}" />

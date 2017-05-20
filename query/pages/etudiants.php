@@ -7,19 +7,36 @@ require_once "../classes/Components.class.php";
 
 
 
-$inputNumEtu = Components::number("numero", "Numéro étudiant");
-$inputNom = Components::text("nom", "Nom");
-$inputPrenom = Components::text("prenom", "Prenom");
-$inputAdmission = Components::select("admission", "Admission", array(
-  "TC",
-  "BR"
+$inputNumEtu = Components::number(array(
+  "name" => "numero",
+  "label" => "Numéro étudiant"
 ));
-$inputFiliere = Components::select("filiere", "Filière", array(
-  "?",
-  "MPL",
-  "MSI",
-  "MRI",
-  "LIB"
+$inputNom = Components::text(array(
+  "name" => "nom",
+  "label" => "Nom"
+));
+$inputPrenom = Components::text(array(
+  "name" => "prenom",
+  "label" => "Prenom"
+));
+$inputAdmission = Components::select(array(
+  "name" => "admission",
+  "label" => "Admission",
+  "list" => array(
+    "TC",
+    "BR"
+  )
+));
+$inputFiliere = Components::select(array(
+  "name" => "filiere",
+  "label" => "Filière",
+  "list" => array(
+    "?",
+    "MPL",
+    "MSI",
+    "MRI",
+    "LIB"
+  )
 ));
 
 
@@ -45,12 +62,13 @@ echo <<<HTML
     </div>
 
     <div class="lo07-card-body">
-      <form id="lo07-form-add" method='post' action='query/actions/etudiant.php?action=add' data-onresponse="formResponse">
+      <form id="lo07-form-add" method='post' action='query/actions/etudiant.php?action=add' data-onresponse="formResponse" onsubmit="return false;">
         <div>{$inputNumEtu}</div>
         <div>{$inputNom}</div>
         <div>{$inputPrenom}</div>
         <div>{$inputAdmission}</div>
         <div>{$inputFiliere}</div>
+        <button class="hidden" onclick="this.form.submit();"></button>
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect lo07-only-edit lo07-button-submit lo07-button-cancel" onclick="return resetForm();">Annuler</button>
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent lo07-button lo07-button-submit" onclick="this.form.submit();"><span id="lo07-button-add-label">Ajouter</span></button>
         <div class='lo07-form-notice lo07-red'></div>
@@ -121,7 +139,8 @@ echo <<<HTML
     var deleteObject = function(numero) {
       swal({
         title: "Êtes-vous sûr ?",
-        text: "La suppression ne peut être annulée, il vous faudra saisir les informations à nouveau.",
+        text: "La suppression ne peut être annulée, il vous faudra saisir les informations à nouveau.<br/>Les cursus associés seront aussi supprimés.",
+        html: true,
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#FF5252",
@@ -189,6 +208,7 @@ echo <<<HTML
     };
 
     var resetForm = function() {
+      console.trace();
       var addCard = document.getElementById('lo07-etudiant-card');
       addCard.classList.remove('lo07-card-edit');
       addCard.classList.add('lo07-card-add');

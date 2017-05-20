@@ -1,6 +1,7 @@
 <?php
 
 require_once '../myPDO.include.php';
+require_once '../classes/Cursus_Element.class.php';
 
 class Cursus {
   private $id = null;
@@ -8,6 +9,10 @@ class Cursus {
   private $nom = null;
   
   private $numero_etudiant = null;
+
+  private static $dependencies = array(
+    "Cursus_Element" => "id_cursus"
+  );
 
   /** 
    * createFromID
@@ -111,6 +116,22 @@ SQL
   }
   
   public function deleteDependencies() {
+    foreach (self::$dependencies as $class => $attr) {
+      $stmt = myPDO::getInstance()->prepare(<<<SQL
+        SELECT *
+        FROM {$class}
+        WHERE {$attr} = :id
+SQL
+      );
+      $stmt->setFetchMode(PDO::FETCH_CLASS, $class);
+      $stmt->execute(array(
+        "id" => $this->id
+      ));
+      $objects = $stmt->fetchAll();
+      foreach ($objects as $key => $obj) {
+        $obj->delete();
+      }
+    }
   }
 
   public static function createCursus($nom, $numero_etudiant) {
