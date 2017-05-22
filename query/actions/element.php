@@ -53,7 +53,12 @@ try {
 
   else if ($action == 'add') {
     if (requireParams('sigle', 'categorie', 'affectation')) {
-      $result['response'] = Element::createElement($_POST['sigle'], $_POST['categorie'], $_POST['affectation'], $checkboxUtt)->export();
+      if (!Element::existsFromSigle($_POST['sigle'])) {
+        $result['response'] = Element::createElement($_POST['sigle'], $_POST['categorie'], $_POST['affectation'], $checkboxUtt)->export();
+      }
+      else {
+        $result['error'] = "Un élément de formation portant ce sigle existe déjà";
+      }
     }
     else {
       $result['error'] = "Merci de compléter tous les champs ci-dessus";

@@ -75,7 +75,7 @@ SQL
 	}
 	
 	public function getAdmission() {
-		return $this->admision;
+		return $this->admission;
 	}
 
 	public function getFiliere() {

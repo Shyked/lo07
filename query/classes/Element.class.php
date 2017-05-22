@@ -38,6 +38,25 @@ SQL
     throw new Exception("Cet élément de formation n'existe pas");
   }
 
+  public static function createFromSigle($sigle) {
+    global $pdo;
+    $class = __CLASS__;
+    $stmt = $pdo->prepare(<<<SQL
+      SELECT *
+      FROM {$class}
+      WHERE sigle = :sigle
+SQL
+    );
+    $stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
+    $stmt->execute(array(
+      'sigle' => $sigle
+    ));
+    if (($object = $stmt->fetch()) !== false) {
+      return $object;
+    }
+    throw new Exception("Cet élément de formation n'existe pas");
+  }
+
   public static function exists($id) {
     global $pdo;
     $class = __CLASS__;
@@ -49,6 +68,22 @@ SQL
     );
     $stmt->execute(array(
       'id' => $id
+    ));
+    if ($stmt->fetch()) return true;
+    else return false;
+  }
+
+  public static function existsFromSigle($sigle) {
+    global $pdo;
+    $class = __CLASS__;
+    $stmt = $pdo->prepare(<<<SQL
+      SELECT id
+      FROM {$class}
+      WHERE sigle = :sigle
+SQL
+    );
+    $stmt->execute(array(
+      'sigle' => $sigle
     ));
     if ($stmt->fetch()) return true;
     else return false;

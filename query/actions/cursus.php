@@ -81,6 +81,33 @@ try {
       $cursus_element->delete();
     }
 
+    else if ($action == 'export') {
+      $cursus_elements = Cursus_Element::getAll($cursus->getId());
+      $etudiant = Etudiant::createFromID($cursus->getNumeroEtudiant());
+      $csvExport = <<<CSV
+ID;{$etudiant->getNumero()};;;;;;;;
+NO;{$etudiant->getNom()};;;;;;;;
+PR;{$etudiant->getPrenom()};;;;;;;;
+AD;{$etudiant->getAdmission()};;;;;;;;
+FI;{$etudiant->getFiliere()};;;;;;;;
+==;s_seq;s_label;sigle;categorie;affectation;utt;profil;credit;resultat
+
+CSV;
+      foreach ($cursus_elements as $key => $c_e) {
+        $element = Element::createFromID($c_e->getIdElement());
+        $utt = $element->getUtt() ? 'Y' : 'N';
+        $profil = $c_e->getProfil() ? 'Y' : 'N';
+        $csvExport .= "EL;{$c_e->getSemSeq()};{$c_e->getSemLabel()};{$element->getSigle()};{$element->getCategorie()};{$element->getAffectation()};{$utt};{$profil};{$c_e->getCredit()};{$c_e->getResultat()}\n";
+      }
+      $csvExport .= "END;;;;;;;;;\n";
+      header("Content-type: text/csv");
+      header("Content-Disposition: attachment; filename={$etudiant->getNom()}_{$etudiant->getPrenom()}.csv");
+      header("Pragma: no-cache");
+      header("Expires: 0");
+      echo $csvExport;
+      exit;
+    }
+
     else {
       $result['error'] = "Unknown action";
     }
@@ -137,6 +164,77 @@ try {
     else if ($action == 'delete') {
       $cursus = Cursus::createFromID($_POST['id']);
       $cursus->delete();
+    }
+
+    else if ($action == 'import') {
+      if ($_FILES['csv_import']['size'] < 1048576) {
+        $csv = file_get_contents($_FILES['csv_import']['tmp_name']);
+        $csvLines = preg_split('/\\r\\n|\\r|\\n/', $csv);
+        $etudiantArray = array(
+          "numero" => null,
+          "nom" => null,
+          "prenom" => null,
+          "admission" => null,
+          "filiere" => null
+        );
+        $indexes = null;
+        $elements = array();
+        foreach ($csvLines as $key => $line) {
+          $data = explode(';', $line);
+          if (strtoupper($data[0]) == 'ID') $etudiantArray['numero'] = $data[1];
+          else if (strtoupper($data[0]) == 'NO') $etudiantArray['nom'] = $data[1];
+          else if (strtoupper($data[0]) == 'PR') $etudiantArray['prenom'] = $data[1];
+          else if (strtoupper($data[0]) == 'AD') $etudiantArray['admission'] = $data[1];
+          else if (strtoupper($data[0]) == 'FI') $etudiantArray['filiere'] = $data[1];
+          else if (strtoupper($data[0]) == '==') {
+            $indexes = array_flip($data);
+          }
+          else if (strtoupper($data[0]) == 'EL') {
+            if ($indexes == null) {
+              $result['error'] = "Merci de définir le nom des colonnes avant de déclarer les éléments";
+              break;
+            }
+            array_push($elements, array(
+              'sem_seq' => $data[$indexes['s_seq']],
+              'sem_label' => $data[$indexes['s_label']],
+              'sigle' => $data[$indexes['sigle']],
+              'categorie' => $data[$indexes['categorie']],
+              'affectation' => $data[$indexes['affectation']],
+              'utt' => $data[$indexes['utt']],
+              'profil' => $data[$indexes['profil']],
+              'credit' => $data[$indexes['credit']],
+              'resultat' => $data[$indexes['resultat']]
+            ));
+          }
+        }
+        if ($result['error'] == null) {
+          $etudiant = null;
+          if (!Etudiant::exists($etudiantArray['numero'])) {
+            $etudiant = Etudiant::createEtudiant($etudiantArray['numero'], $etudiantArray['nom'], $etudiantArray['prenom'], $etudiantArray['admission'], $etudiantArray['filiere']);
+          }
+          else {
+            $etudiant = Etudiant::createFromID($etudiantArray['numero']);
+          }
+          $cursus = Cursus::createCursus("Import CSV", $etudiant->getNumero());
+          foreach ($elements as $key => $elementArray) {
+            $element = null;
+            if (!Element::existsFromSigle($elementArray['sigle'])) {
+              $element = Element::createElement($elementArray['sigle'], $elementArray['categorie'], $elementArray['affectation'], strtoupper($elementArray['utt']) == "Y");
+            }
+            else {
+              $element = Element::createFromSigle($elementArray['sigle']);
+            }
+            Cursus_Element::createCursusElement($cursus->getId(), $element->getId(), $elementArray['sem_seq'], $elementArray['sem_label'], strtoupper($elementArray['profil']) == "Y", $elementArray['credit'], $elementArray['resultat'])->export();
+          }
+          $result['response'] = "OK";
+        }
+        else {
+          $result['error'] = "Aucun label n'a été définit dans le règlement";
+        }
+      }
+      else {
+        $result['error'] = "Fichier trop lourd (doit être inférieur à 1 Mo)";
+      }
     }
 
     else {

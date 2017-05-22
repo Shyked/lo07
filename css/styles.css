@@ -285,3 +285,7 @@ table.lo07-list table.lo07-list {
 .lo07-button-previous:active {
   background-color: rgba(255, 255, 255, 0.1);
 }
+
+.lo07-file {
+  display: none;
+}

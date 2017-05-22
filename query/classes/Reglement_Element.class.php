@@ -1,17 +1,23 @@
 <?php
 
 require_once '../myPDO.include.php';
-require_once '../classes/Cursus_Element.class.php';
 
-class Cursus {
+class Reglement_Element {
   private $id = null;
-  
-  private $nom = null;
-  
-  private $numero_etudiant = null;
+
+  private $id_reglement = null;
+
+  private $id_regle = null;
+
+  private $agregat = null;
+
+  private $categorie = null;
+
+  private $affectation = null;
+
+  private $credit = null;
 
   private static $dependencies = array(
-    "Cursus_Element" => "id_cursus"
   );
 
 
@@ -31,7 +37,7 @@ SQL
     if (($object = $stmt->fetch()) !== false) {
       return $object;
     }
-    throw new Exception("Ce cursus n'existe pas");
+    throw new Exception("Cette règle n'existe pas");
   }
 
   public static function exists($id) {
@@ -54,24 +60,56 @@ SQL
     return $this->id;
   }
   
-  public function getNom() {
-    return $this->nom;
+  public function getIdReglement() {
+    return $this->id_reglement;
   }
-  
-  public function getNumeroEtudiant() {
-    return $this->numero_etudiant;
+
+  public function getIdRegle() {
+    return $this->id_regle;
+  }
+
+  public function getAgregat() {
+    return $this->agregat;
+  }
+
+  public function getCategorie() {
+    return $this->categorie;
+  }
+
+  public function getAffectation() {
+    return $this->affectation;
+  }
+
+  public function getCredit() {
+    return $this->credit;
   }
 
   
-  public function setNom($nom) {
-    $this->set('nom', $nom);
-  }
-  
-  public function setNumeroEtudiant($numero_etudiant) {
-    if (!Etudiant::exists($numero_etudiant)) {
-      throw new Exception("Cet étudiant n'existe pas");
+  public function setIdReglement($id_reglement) {
+    if (!Cursus::exists($id_reglement)) {
+      throw new Exception("Ce règlement n'existe pas");
     }
-    $this->set('numero_etudiant', $numero_etudiant);
+    $this->set('id_reglement', $id_reglement);
+  }
+
+  public function setIdRegle($id_regle) {
+    $this->set('id_regle', $id_regle);
+  }
+
+  public function setAgregat($agregat) {
+    $this->set('agregat', $agregat);
+  }
+
+  public function setCategorie($categorie) {
+    $this->set('categorie', $categorie);
+  }
+
+  public function setAffectation($affectation) {
+    $this->set('affectation', $affectation);
+  }
+
+  public function setCredit($credit) {
+    $this->set('credit', $credit);
   }
 
   private function set($attr, $value) {
@@ -126,38 +164,41 @@ SQL
     }
   }
 
-  public static function createCursus($nom, $numero_etudiant) {
+  public static function createReglementElement($id_reglement, $id_regle, $agregat, $categorie, $affectation, $credit) {
     global $pdo;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      INSERT INTO {$class} (nom, numero_etudiant)
-      VALUES (:nom, :numero_etudiant)
+      INSERT INTO {$class} (id_reglement, id_regle, agregat, categorie, affectation, credit)
+      VALUES (:id_reglement, :id_regle, :agregat, :categorie, :affectation, :credit)
 SQL
     );
     $stmt->execute(array(
-      "nom" => $nom,
-      "numero_etudiant" => $numero_etudiant
+      "id_reglement" => $id_reglement,
+      "id_regle" => $id_regle,
+      "agregat" => $agregat,
+      "categorie" => $categorie,
+      "affectation" => $affectation,
+      "credit" => $credit
     ));
     return self::createFromID($pdo->lastInsertId());
   }
   
-  /** 
-   * getAll
-   *
-   * Retourne la totalité des Cursus
-   * 
-   * @return array Tableau de Cursus
-   */
-  public static function getAll() {
+
+  public static function getAll($id_reglement = null) {
     $class = __CLASS__;
+    $where = $id_reglement ? 'WHERE id_reglement = :id_reglement' : '';
     $stmt = myPDO::getInstance()->prepare(<<<SQL
       SELECT *
       FROM {$class}
-      ORDER BY numero_etudiant, id
+      {$where}
+      ORDER BY id_reglement, id_regle, id
 SQL
     );
     $stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
-    $stmt->execute();
+    if ($id_reglement) $stmt->execute(array(
+      "id_reglement" => $id_reglement
+    ));
+    else $stmt->execute();
     return $stmt->fetchAll();
   }
 

@@ -191,6 +191,11 @@
       title: 'Gérer les cursus',
       icon: 'trending_up'
     },
+    reglement: {
+      label: 'Règlement',
+      title: 'Gérer les règlement',
+      icon: 'check'
+    },
     tests: {
       label: 'Tests',
       title: 'Tests',

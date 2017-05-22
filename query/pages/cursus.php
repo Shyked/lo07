@@ -79,6 +79,7 @@ if ($cursus) {
         <table class="lo07-list" id="lo07-cursus_element">
 
         </table>
+        <button id="lo07-export-csv" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored lo07-button lo07-button-submit"><span>Exporter CSV</span></button>
       </div>
     </div>
 
@@ -328,6 +329,11 @@ if ($cursus) {
       };
 
 
+      $("#lo07-export-csv").click(function(e) {
+        document.location.href = "./query/actions/cursus.php?id={$cursus->getId()}&action=export";
+      });
+
+
       refreshList();
 
       $('#lo07-form-add')[0].element_search.addEventListener('change', fillSelect);
@@ -396,6 +402,10 @@ else {
         <table class="lo07-list" id="lo07-cursus">
 
         </table>
+        <form action='query/actions/cursus.php?action=import' method="post" data-onresponse="importResponse" enctype="multipart/form-data" onsubmit="return false;">
+          <input type="file" id="lo07-file" class="lo07-file" name="csv_import" />
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored lo07-button lo07-button-submit lo07-js-file"><span>Importer CSV</span></button>
+        </form>
       </div>
     </div>
 
@@ -410,6 +420,7 @@ else {
           <div>{$inputEtuSearch}</div>
           <div>{$inputNumEtu}</div>
           <div>{$inputNomCursus}</div>
+          <button class="hidden" onclick="this.form.submit();"></button>
           <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect lo07-only-edit lo07-button-submit lo07-button-cancel" onclick="return resetForm();">Annuler</button>
           <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent lo07-button lo07-button-submit" onclick="this.form.submit();"><span id="lo07-button-add-label">Ajouter</span></button>
           <div class='lo07-form-notice lo07-red'></div>
@@ -610,6 +621,29 @@ else {
             swal("Oups...", "Une erreur est survenue !", "error");
           }
         });
+      };
+
+
+      var selectFile = function() {
+        this.parentElement.getElementsByTagName('input')[0].click();
+      };
+
+      $('.lo07-js-file').each(function(id, element) {
+        element.addEventListener('click', selectFile);
+        var input = this.form.csv_import;
+        input.addEventListener('change', function() {
+          this.form.submit();
+          input.form.reset();
+        });
+      });
+
+      var importResponse = function(response, error) {
+        if (error) {
+          console.error(error);
+        }
+        else {
+          refreshList();
+        }
       };
 
 

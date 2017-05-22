@@ -19,6 +19,7 @@ var updateSelect = function(select, values, pickFirst) {
 
 
 var updateInput = function(input, value, displayedValue) {
+  if (typeof value === 'undefined') throw 'Value is not defined for ' + input.name;
   if (input.parentElement.classList.contains('getmdl-select')) {
     if (typeof displayedValue == 'undefined') displayedValue = value;
     input.value = displayedValue;

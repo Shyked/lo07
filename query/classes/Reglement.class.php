@@ -1,17 +1,15 @@
 <?php
 
 require_once '../myPDO.include.php';
-require_once '../classes/Cursus_Element.class.php';
+require_once '../classes/Reglement_Element.class.php';
 
-class Cursus {
+class Reglement {
   private $id = null;
   
   private $nom = null;
-  
-  private $numero_etudiant = null;
 
   private static $dependencies = array(
-    "Cursus_Element" => "id_cursus"
+    "Reglement_Element" => "id_reglement"
   );
 
 
@@ -31,7 +29,7 @@ SQL
     if (($object = $stmt->fetch()) !== false) {
       return $object;
     }
-    throw new Exception("Ce cursus n'existe pas");
+    throw new Exception("Ce règlement n'existe pas");
   }
 
   public static function exists($id) {
@@ -57,22 +55,12 @@ SQL
   public function getNom() {
     return $this->nom;
   }
-  
-  public function getNumeroEtudiant() {
-    return $this->numero_etudiant;
-  }
 
   
   public function setNom($nom) {
     $this->set('nom', $nom);
   }
   
-  public function setNumeroEtudiant($numero_etudiant) {
-    if (!Etudiant::exists($numero_etudiant)) {
-      throw new Exception("Cet étudiant n'existe pas");
-    }
-    $this->set('numero_etudiant', $numero_etudiant);
-  }
 
   private function set($attr, $value) {
     global $pdo;
@@ -126,17 +114,16 @@ SQL
     }
   }
 
-  public static function createCursus($nom, $numero_etudiant) {
+  public static function createReglement($nom) {
     global $pdo;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      INSERT INTO {$class} (nom, numero_etudiant)
-      VALUES (:nom, :numero_etudiant)
+      INSERT INTO {$class} (nom)
+      VALUES (:nom)
 SQL
     );
     $stmt->execute(array(
-      "nom" => $nom,
-      "numero_etudiant" => $numero_etudiant
+      "nom" => $nom
     ));
     return self::createFromID($pdo->lastInsertId());
   }
@@ -144,16 +131,16 @@ SQL
   /** 
    * getAll
    *
-   * Retourne la totalité des Cursus
+   * Retourne la totalité des Reglement
    * 
-   * @return array Tableau de Cursus
+   * @return array Tableau de Reglement
    */
   public static function getAll() {
     $class = __CLASS__;
     $stmt = myPDO::getInstance()->prepare(<<<SQL
       SELECT *
       FROM {$class}
-      ORDER BY numero_etudiant, id
+      ORDER BY nom
 SQL
     );
     $stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
