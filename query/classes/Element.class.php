@@ -21,7 +21,7 @@ class Element {
 
   public static function createFromID($id) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT *
       FROM {$db_prefix}{$class}
@@ -40,7 +40,7 @@ SQL
 
   public static function createFromSigle($sigle) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT *
       FROM {$db_prefix}{$class}
@@ -59,7 +59,7 @@ SQL
 
   public static function exists($id) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT id
       FROM {$db_prefix}{$class}
@@ -75,7 +75,7 @@ SQL
 
   public static function existsFromSigle($sigle) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT id
       FROM {$db_prefix}{$class}
@@ -128,7 +128,7 @@ SQL
 
   private function set($attr, $value) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       UPDATE {$db_prefix}{$class} SET {$attr} = :value WHERE id = :id
 SQL
@@ -149,7 +149,7 @@ SQL
   public function delete() {
     global $pdo, $db_prefix;
     $this->deleteDependencies();
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       DELETE FROM {$db_prefix}{$class} WHERE id = :id
 SQL
@@ -162,6 +162,7 @@ SQL
   public function deleteDependencies() {
     global $pdo, $db_prefix;
     foreach (self::$dependencies as $class => $attr) {
+      $class = strtolower($class);
       $stmt = $pdo->prepare(<<<SQL
         SELECT *
         FROM {$db_prefix}{$class}
@@ -183,7 +184,7 @@ SQL
     $categorie = strtoupper($categorie);
     $affectation = strtoupper($affectation);
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       INSERT INTO {$db_prefix}{$class} (sigle, categorie, affectation, utt)
       VALUES (:sigle, :categorie, :affectation, :utt)
@@ -200,7 +201,7 @@ SQL
   
   public static function getAll() {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT *
       FROM {$db_prefix}{$class}
@@ -224,7 +225,7 @@ SQL;
       unset($qArray[$key]);
     }
     $qSQL = preg_replace('/AND /', '', $qSQL);
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT *
       FROM {$db_prefix}{$class}

@@ -23,7 +23,7 @@ class Reglement_Element {
 
   public static function createFromID($id) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT *
       FROM {$db_prefix}{$class}
@@ -42,7 +42,7 @@ SQL
 
   public static function exists($id) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT id
       FROM {$db_prefix}{$class}
@@ -114,7 +114,7 @@ SQL
 
   private function set($attr, $value) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       UPDATE {$db_prefix}{$class} SET {$attr} = :value WHERE id = :id
 SQL
@@ -135,7 +135,7 @@ SQL
   public function delete() {
     global $pdo, $db_prefix;
     $this->deleteDependencies();
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       DELETE FROM {$db_prefix}{$class} WHERE id = :id
 SQL
@@ -148,6 +148,7 @@ SQL
   public function deleteDependencies() {
     global $pdo, $db_prefix;
     foreach (self::$dependencies as $class => $attr) {
+      $class = strtolower($class);
       $stmt = $pdo->prepare(<<<SQL
         SELECT *
         FROM {$db_prefix}{$class}
@@ -228,7 +229,7 @@ SQL
     $agregat = strtoupper($agregat);
     $categorie = strtoupper($categorie);
     $affectation = strtoupper($affectation);
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       INSERT INTO {$db_prefix}{$class} (id_reglement, id_regle, agregat, categorie, affectation, credit)
       VALUES (:id_reglement, :id_regle, :agregat, :categorie, :affectation, :credit)
@@ -248,7 +249,7 @@ SQL
 
   public static function getAll($id_reglement = null) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $where = $id_reglement ? 'WHERE id_reglement = :id_reglement' : '';
     $stmt = $pdo->prepare(<<<SQL
       SELECT *

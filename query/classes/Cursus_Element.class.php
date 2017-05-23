@@ -25,7 +25,7 @@ class Cursus_Element {
 
   public static function createFromID($id) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT *
       FROM {$db_prefix}{$class}
@@ -44,7 +44,7 @@ SQL
 
   public static function exists($id) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       SELECT id
       FROM {$db_prefix}{$class}
@@ -127,7 +127,7 @@ SQL
 
   private function set($attr, $value) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       UPDATE {$db_prefix}{$class} SET {$attr} = :value WHERE id = :id
 SQL
@@ -148,7 +148,7 @@ SQL
   public function delete() {
     global $pdo, $db_prefix;
     $this->deleteDependencies();
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       DELETE FROM {$db_prefix}{$class} WHERE id = :id
 SQL
@@ -161,6 +161,7 @@ SQL
   public function deleteDependencies() {
     global $pdo, $db_prefix;
     foreach (self::$dependencies as $class => $attr) {
+      $class = strtolower($class);
       $stmt = $pdo->prepare(<<<SQL
         SELECT *
         FROM {$db_prefix}{$class}
@@ -180,7 +181,7 @@ SQL
 
   public static function createCursusElement($id_cursus, $id_element, $sem_seq, $sem_label, $profil, $credit, $resultat) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $stmt = $pdo->prepare(<<<SQL
       INSERT INTO {$db_prefix}{$class} (id_cursus, id_element, sem_seq, sem_label, profil, credit, resultat)
       VALUES (:id_cursus, :id_element, :sem_seq, :sem_label, :profil, :credit, :resultat)
@@ -201,11 +202,11 @@ SQL
 
   public static function getAll($id_cursus = null) {
     global $pdo, $db_prefix;
-    $class = __CLASS__;
+    $class = strtolower(__CLASS__);
     $where = $id_cursus ? 'WHERE id_cursus = :id_cursus' : '';
     $stmt = $pdo->prepare(<<<SQL
       SELECT ce.*
-      FROM {$db_prefix}{$class} ce JOIN {$db_prefix}Element e ON (ce.id_element = e.id)
+      FROM {$db_prefix}{$class} ce JOIN {$db_prefix}element e ON (ce.id_element = e.id)
       {$where}
       ORDER BY ce.id_cursus, ce.sem_seq, e.categorie, e.sigle, ce.id_element, ce.id
 SQL

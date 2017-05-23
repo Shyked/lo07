@@ -29,7 +29,7 @@ class Etudiant {
 	 */
 	public static function createFromID($numero) {
 		global $pdo, $db_prefix;
-		$class = __CLASS__;
+		$class = strtolower(__CLASS__);
   	$stmt = $pdo->prepare(<<<SQL
   		SELECT *
   		FROM {$db_prefix}{$class}
@@ -48,7 +48,7 @@ SQL
 
  	public static function exists($numero) {
  		global $pdo, $db_prefix;
- 		$class = __CLASS__;
+ 		$class = strtolower(__CLASS__);
  		$stmt = $pdo->prepare(<<<SQL
  			SELECT numero
  			FROM {$db_prefix}{$class}
@@ -86,7 +86,7 @@ SQL
     global $pdo, $db_prefix;
 		$stmt = $pdo->prepare(<<<SQL
       SELECT *
-      FROM cursus
+      FROM {$db_prefix}cursus
       WHERE numero_etudiant = :numero
       ORDER BY nom, id
 SQL
@@ -117,7 +117,7 @@ SQL
 
 	private function set($attr, $value) {
 		global $pdo, $db_prefix;
-		$class = __CLASS__;
+		$class = strtolower(__CLASS__);
 		$stmt = $pdo->prepare(<<<SQL
 			UPDATE {$db_prefix}{$class} SET {$attr} = :value WHERE numero = :numero
 SQL
@@ -138,7 +138,7 @@ SQL
 	public function delete() {
 		global $pdo, $db_prefix;
 		$this->deleteDependencies();
-		$class = __CLASS__;
+		$class = strtolower(__CLASS__);
 		$stmt = $pdo->prepare(<<<SQL
 			DELETE FROM {$db_prefix}{$class} WHERE numero = :numero
 SQL
@@ -151,6 +151,7 @@ SQL
 	public function deleteDependencies() {
     global $pdo, $db_prefix;
 		foreach (self::$dependencies as $class => $attr) {
+      $class = strtolower($class);
 			$stmt = $pdo->prepare(<<<SQL
 	      SELECT *
 	      FROM {$db_prefix}{$class}
@@ -183,7 +184,7 @@ SQL
 	 */
 	public static function createEtudiant($numero, $nom, $prenom, $admission, $filiere) {
 		global $pdo, $db_prefix;
-		$class = __CLASS__;
+		$class = strtolower(__CLASS__);
 		$stmt = $pdo->prepare(<<<SQL
 			INSERT INTO {$db_prefix}{$class} (numero, nom, prenom, admission, filiere)
 			VALUES (:numero, :nom, :prenom, :admission, :filiere)
@@ -208,7 +209,7 @@ SQL
 	 */
 	public static function getAll() {
     global $pdo, $db_prefix;
-		$class = __CLASS__;
+		$class = strtolower(__CLASS__);
 		$stmt = $pdo->prepare(<<<SQL
       SELECT *
       FROM {$db_prefix}{$class}
@@ -232,7 +233,7 @@ SQL;
 			unset($qArray[$key]);
 		}
 		$qSQL = preg_replace('/AND /', '', $qSQL);
-		$class = __CLASS__;
+		$class = strtolower(__CLASS__);
 		$stmt = $pdo->prepare(<<<SQL
       SELECT *
       FROM {$db_prefix}{$class}
