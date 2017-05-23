@@ -1,4 +1,5 @@
-var updateSelect = function(select, values, pickFirst) {
+var updateSelect = function(form, name, values, pickFirst) {
+  var select = form[name + '_selectLabel'];
   var list = select.parentElement.getElementsByClassName('mdl-menu')[0];
   list.innerHTML = '';
   for (var id in values) {

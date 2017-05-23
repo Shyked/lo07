@@ -25,6 +25,7 @@ try {
   if (isset($_GET['id'])) {
 
     $reglement = Reglement::createFromID($_GET['id']);
+    $affectation = isset($_POST['affectation']) ? $_POST['affectation'] : '';
 
     if ($action == 'get') {
       if (requireParams('id')) {
@@ -44,7 +45,7 @@ try {
 
     else if ($action == 'add') {
       if (requireParams('id_regle', 'agregat', 'categorie', 'credit')) {
-        $result['response'] = Reglement_Element::createReglementElement($_GET['id'], $_POST['id_regle'], $_POST['agregat'], $_POST['categorie'], $_POST['affectation'], $_POST['credit'])->export();
+        $result['response'] = Reglement_Element::createReglementElement($_GET['id'], $_POST['id_regle'], $_POST['agregat'], $_POST['categorie'], $affectation, $_POST['credit'])->export();
       }
       else {
         $result['error'] = "Merci de compléter tous les champs ci-dessus";
@@ -52,12 +53,12 @@ try {
     }
 
     else if ($action == 'edit') {
-      if (requireParams('id', 'id_regle', 'agregat', 'categorie', 'affectation', 'credit')) {
+      if (requireParams('id', 'id_regle', 'agregat', 'categorie', 'credit')) {
         $reglement_element = Reglement_Element::createFromID($_POST['id']);
         $reglement_element->setIdRegle($_POST['id_regle']);
         $reglement_element->setAgregat($_POST['agregat']);
         $reglement_element->setCategorie($_POST['categorie']);
-        $reglement_element->setAffectation($_POST['affectation']);
+        $reglement_element->setAffectation($affectation);
         $reglement_element->setCredit($_POST['credit']);
         $result['response'] = $reglement_element->export();
       }
@@ -148,8 +149,8 @@ try {
               'id_regle' => $data[0],
               'agregat' => $data[1],
               'categorie' => $data[2],
-              'affectation' => $data[3],
-              'credit' => $data[4]
+              'affectation' => (strtoupper($data[2]) == "ALL") ? "" : $data[3],
+              'credit' => (strtoupper($data[2]) == "ALL") ? ($data[4] ? $data[4] : $data[3]) : $data[4]
             ));
           }
         }

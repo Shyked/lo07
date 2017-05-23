@@ -41,6 +41,7 @@ if ($reglement) {
     "name" => "affectation",
     "label" => "Affectation",
     "list" => array(
+      "",
       "TC",
       "BR",
       "TCBR",
@@ -69,7 +70,7 @@ if ($reglement) {
       </div>
     </div>
 
-    <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top lo07-card-add" id="lo07-reglement_element-card">
+    <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--6-col-tablet mdl-cell--top lo07-card-add" id="lo07-reglement_element-card">
       <div class="lo07-card-title">
         Ajouter au règlement
       </div>
@@ -148,8 +149,8 @@ if ($reglement) {
           <td class="lo07-list-icon"><i class="material-icons" style="color: ' + color + ';">label</i></td>\
           <td class="lo07-list-primary">' + id_regle + '</td>\
           <td>' + agregat + '</td>\
-          <td>' + affectation + '</td>\
           <td>' + categorie + '</td>\
+          <td>' + affectation + '</td>\
           <td>' + credit + '</td>\
           <td class="lo07-list-right lo07-list-icon"><a class="mdl-list__item-primary-action lo07-lightgrey lo07-hover-yellow lo07-transition-faster" onclick="editObject(' + id + ');"><i class="material-icons">edit</i></a></td>\
           <td class="lo07-list-right lo07-list-icon"><a class="mdl-list__item-secondary-action lo07-lightgrey lo07-hover-red lo07-transition-faster" onclick="deleteObject(' + id + ');"><i class="material-icons">delete</i></a></td>\
@@ -216,9 +217,9 @@ if ($reglement) {
               var reglement_element = result.response;
               updateInput(form.id, reglement_element.id);
               updateInput(form.id_regle, reglement_element.id_regle);
-              updateInput(form.agregat, reglement_element.agregat);
+              updateInput(form.agregat_selectLabel, reglement_element.agregat);
               updateInput(form.categorie, reglement_element.categorie);
-              updateInput(form.affectation, reglement_element.affectation);
+              updateInput(form.affectation_selectLabel, reglement_element.affectation);
               updateInput(form.credit, reglement_element.credit);
               form.id.setAttribute('readonly', 'readonly');
             }
@@ -242,9 +243,9 @@ if ($reglement) {
         form.setAttribute('action', form.getAttribute('action').replace(/=edit/, '=add'));
         updateInput(form.id, '');
         updateInput(form.id_regle, '');
-        updateInput(form.agregat, '');
+        updateInput(form.agregat_selectLabel, '');
         updateInput(form.categorie, '');
-        updateInput(form.affectation, '');
+        updateInput(form.affectation_selectLabel, '');
         updateInput(form.credit, '');
         form.id.removeAttribute('readonly');
         return false;
@@ -316,7 +317,7 @@ else {
       </div>
     </div>
 
-    <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top lo07-card-add" id="lo07-reglement-card">
+    <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--6-col-tablet mdl-cell--top lo07-card-add" id="lo07-reglement-card">
       <div class="lo07-card-title">
         Ajouter un règlement
       </div>

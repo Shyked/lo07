@@ -110,17 +110,18 @@
               getmdlSelect.init('.getmdl-select');
               $("#page-body form").each(function(id, element) {
                 element.submit = function() {
-                  var data = $(this).serializeArray().reduce(function(obj, item) {
+                  /*var data = $(this).serializeArray().reduce(function(obj, item) {
                     obj[item.name] = item.value;
                     return obj;
-                  }, {});
+                  }, {});*/
+                  var additionalData = {};
                   var selects = this.getElementsByClassName('getmdl-select');
                   $(selects).each(function(id, select) {
                     var input = select.getElementsByTagName('input')[0];
-                    data[input.name] = input.getAttribute('data-val');
+                    additionalData[input.name.replace(/_selectLabel$/, '')] = input.getAttribute('data-val');
                   });
                   $(this).ajaxSubmit({
-                    'data': data,
+                    'data': additionalData,
                     'success': function(res) {
                       eval(element.getAttribute('data-onresponse')).call(element, res.response, res.error);
                     }

@@ -15,6 +15,30 @@ ul.lo07-no-dot {
   list-style-type: none;
 }
 
+ul {
+  font-size: 18px;
+  margin-top: 0.5em;
+  font-weight: 300;
+}
+
+h4 {
+  font-weight: 500;
+  margin-bottom: 0.5em;
+}
+
+h5 {
+  margin-bottom: 0.5em;
+}
+
+h6 {
+  margin-bottom: 0em;
+  margin-top: 0.5em;
+}
+
+a {
+  cursor: pointer;
+}
+
 .lo07-ripple-white {
   position: relative;
   overflow:hidden;
@@ -26,6 +50,10 @@ ul.lo07-no-dot {
 .mdl-list__item-avatar, .mdl-list__item-avatar.material-icons {
   padding: 5px;
   font-size: 30px;
+}
+
+.mdl-checkbox__box-outline {
+  overflow: initial;
 }
 
 .getmdl-select > .mdl-menu__container {
@@ -40,6 +68,7 @@ ul.lo07-no-dot {
   transition-duration: 250ms;
   transform: translateY(0px);
   opacity: 1;
+  margin-bottom: 200px;
 }
 
 #page-body.pagemanager-body-loading {
@@ -51,19 +80,6 @@ ul.lo07-no-dot {
 .lo07-text-block {
   padding-left: 1em;
   box-sizing: border-box;
-}
-
-h5 {
-  margin-bottom: 0.5em;
-}
-
-h6 {
-  margin-bottom: 0em;
-  margin-top: 0.5em;
-}
-
-a {
-  cursor: pointer;
 }
 
 .lo07-card-title {
@@ -288,4 +304,12 @@ table.lo07-list table.lo07-list {
 
 .lo07-file {
   display: none;
+}
+
+.lo07-card-reglement .lo07-card-title {
+  background-color: #2ba94a;
+}
+
+.lo07-card-reglement .mdl-button.mdl-button--colored {
+  background-color: #2ba94a;
 }

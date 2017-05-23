@@ -56,7 +56,7 @@ echo <<<HTML
     </div>
   </div>
 
-  <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top lo07-card-add" id="lo07-etudiant-card">
+  <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--6-col-tablet mdl-cell--top lo07-card-add" id="lo07-etudiant-card">
     <div class="lo07-card-title">
       Ajouter un étudiant
     </div>
@@ -195,8 +195,8 @@ echo <<<HTML
             updateInput(form.numero, etudiant.numero);
             updateInput(form.nom, etudiant.nom);
             updateInput(form.prenom, etudiant.prenom);
-            updateInput(form.admission, etudiant.admission);
-            updateInput(form.filiere, etudiant.filiere);
+            updateInput(form.admission_selectLabel, etudiant.admission);
+            updateInput(form.filiere_selectLabel, etudiant.filiere);
             form.numero.setAttribute('readonly', 'readonly');
           }
         },
@@ -221,8 +221,8 @@ echo <<<HTML
       updateInput(form.numero, '');
       updateInput(form.nom, '');
       updateInput(form.prenom, '');
-      updateInput(form.admission, '');
-      updateInput(form.filiere, '');
+      updateInput(form.admission_selectLabel, '');
+      updateInput(form.filiere_selectLabel, '');
       form.numero.removeAttribute('readonly');
       return false;
     };

@@ -114,6 +114,23 @@ SQL
     }
   }
 
+  public function checkCursus($cursus) {
+    $cursus_elements = Cursus_Element::getAll($cursus->getId());
+    $etudiant = Etudiant::createFromID($cursus->getNumeroEtudiant());
+    $elementsArray = array();
+    foreach ($cursus_elements as $key => $c_e) {
+      $cursus_elementArray = $c_e->export();
+      $cursus_elementArray['element'] = Element::createFromID($c_e->getIdElement())->export();
+      array_push($elementsArray, $cursus_elementArray);
+    }
+    $reglement_elements = Reglement_Element::getAll($this->id);
+    $results = array();
+    foreach ($reglement_elements as $key => $reglement_element) {
+      array_push($results, $reglement_element->checkCursus($cursus, $elementsArray));
+    }
+    return $results;
+  }
+
   public static function createReglement($nom) {
     global $pdo;
     $class = __CLASS__;

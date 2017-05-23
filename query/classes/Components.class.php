@@ -71,9 +71,10 @@ HTML;
 	}
 
 	public static function select($params) {
-		$name = $params['name'];
+		$name = $params['name'] . "_selectLabel";
 		$label = $params['label'];
 		$list = $params['list'];
+		$associative = isset($params['associative']) ? $params['associative'] : false;
 		$fullwidth = isset($params['fullwidth']) ? $params['fullwidth'] : false;
 		$required = isset($params['required']) ? $params['required'] : false;
 		$default = isset($params['default']) ? $params['default'] : '';
@@ -82,7 +83,7 @@ HTML;
 		$list_html = "";
 		$width = $fullwidth ? "getmdl-select__fullwidth" : "getmdl-select__fix-height";
 		foreach ($list as $key => $val) {
-			$value = is_numeric($key) ? $val : $key;
+			$value = $associative ? $key : $val;
 			$list_html .= "<li class='mdl-menu__item' data-val='{$value}'>{$val}</li>";
 		}
 		return <<<HTML

@@ -3,6 +3,7 @@
 require_once "../classes/Components.class.php";
 require_once '../classes/Cursus.class.php';
 require_once '../classes/Etudiant.class.php';
+require_once '../classes/Reglement.class.php';
 
 
 
@@ -32,7 +33,8 @@ if ($cursus) {
     "name" => "id_element",
     "label" => "Élément de formation",
     "list" => array(),
-    "fullwidth" => true
+    "fullwidth" => true,
+    "associative" => true
   ));
   $inputSemSeq = Components::number(array(
     "name" => "sem_seq",
@@ -68,6 +70,20 @@ if ($cursus) {
   ));
 
 
+  $reglements = Reglement::getAll();
+  $reglementsArray = array();
+  foreach($reglements as $key => $reglement) {
+    $reglementsArray[$reglement->getId()] = $reglement->getNom();
+  }
+
+  $inputReglement = Components::select(array(
+    "name" => "reglement",
+    "label" => "Règlement",
+    "list" => $reglementsArray,
+    "associative" => true
+  ));
+
+
   echo <<<HTML
 
     <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
@@ -83,7 +99,7 @@ if ($cursus) {
       </div>
     </div>
 
-    <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top lo07-card-add" id="lo07-cursus_element-card">
+    <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--6-col-tablet mdl-cell--top lo07-card-add" id="lo07-cursus_element-card">
       <div class="lo07-card-title">
         Ajouter au cursus
       </div>
@@ -103,6 +119,21 @@ if ($cursus) {
           <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent lo07-button lo07-button-submit" onclick="this.form.submit();"><span id="lo07-button-add-label">Ajouter</span></button>
           <div class='lo07-form-notice lo07-red'></div>
         </form>
+      </div>
+    </div>
+
+    <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col lo07-card-reglement">
+      <div class="lo07-card-title">
+        Conformité du cursus
+      </div>
+
+      <div class="lo07-card-body">
+        <form id="lo07-form-reglement" method='post' action='query/actions/cursus.php?id={$cursus->getId()}&action=check' data-onresponse="formCheckResponse" onsubmit="return false;">
+          <div>{$inputReglement}</div>
+          <button id="lo07-button-reglement" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored lo07-button lo07-button-submit" onclick="this.form.submit();"><span>Vérifier</span></button>
+        </form>
+        <div id="lo07-reglement-result">
+        </div>
       </div>
     </div>
 
@@ -264,13 +295,13 @@ if ($cursus) {
               var cursus_element = result.response;
               updateInput(form.id, cursus_element.id);
               updateInput(form.element_search, '');
-              updateInput(form.id_element, cursus_element.id_element, cursus_element.element.sigle);
+              updateInput(form.id_element_selectLabel, cursus_element.id_element, cursus_element.element.sigle);
               updateInput(form.sem_seq, cursus_element.sem_seq);
               updateInput(form.sem_label, cursus_element.sem_label);
               if (cursus_element.profil && cursus_element.profil !== "0") form.profil.parentElement.MaterialCheckbox.uncheck();
               else form.profil.parentElement.MaterialCheckbox.check();
               updateInput(form.credit, cursus_element.credit);
-              updateInput(form.resultat, cursus_element.resultat);
+              updateInput(form.resultat_selectLabel, cursus_element.resultat);
               form.id.setAttribute('readonly', 'readonly');
             }
           },
@@ -293,12 +324,12 @@ if ($cursus) {
         form.setAttribute('action', form.getAttribute('action').replace(/=edit/, '=add'));
         updateInput(form.id, '');
         updateInput(form.element_search, '');
-        updateInput(form.id_element, '');
+        updateInput(form.id_element_selectLabel, '');
         updateInput(form.sem_seq, '');
         updateInput(form.sem_label, '');
         form.profil.parentElement.MaterialCheckbox.uncheck();
         updateInput(form.credit, '');
-        updateInput(form.resultat, '');
+        updateInput(form.resultat_selectLabel, '');
         form.id.removeAttribute('readonly');
         return false;
       };
@@ -319,7 +350,7 @@ if ($cursus) {
               for (var id in result.response) {
                 list[result.response[id].id] = result.response[id].sigle;
               }
-              updateSelect(form.id_element, list, search.length > 0);
+              updateSelect(form, 'id_element', list, search.length > 0);
             }
           },
           error: function(res) {
@@ -332,6 +363,49 @@ if ($cursus) {
       $("#lo07-export-csv").click(function(e) {
         document.location.href = "./query/actions/cursus.php?id={$cursus->getId()}&action=export";
       });
+
+
+
+      var formCheckResponse = function(response, error) {
+        console.log(response);
+        console.log(error);
+        var valid = [];
+        var needed = [];
+        for (var id in response) {
+          if (response[id].agregat == "SUM") {
+            if (response[id].credits >= response[id].creditsNeeded) {
+              valid.push("" + response[id].credits + " crédits sur " + response[id].creditsNeeded + " " + (response[id].categories.indexOf('ALL') != -1 ? "en tout" : "de " + response[id].categories.join("+") + " en " + response[id].affectation) + (response[id].utt ? " à l'UTT" : ""));
+            }
+            else {
+              needed.push("" + (response[id].creditsNeeded - response[id].credits) + " crédits sur " + response[id].creditsNeeded + " " + (response[id].categories.indexOf('ALL') != -1 ? "en tout" : "de " + response[id].categories.join("+") + " en " + response[id].affectation) + (response[id].utt ? " à l'UTT" : ""));
+            }
+          }
+          else if (response[id].agregat == "EXISTS") {
+            if (response[id].exists) {
+              valid.push("le " + (response[id].categories.indexOf('ALL') != -1 ? "tout" : response[id].categories.join("+") + " en " + response[id].affectation) + (response[id].utt ? " à l'UTT" : ""));
+            }
+            else {
+              needed.push("le " + (response[id].categories.indexOf('ALL') != -1 ? "tout" : response[id].categories.join("+") + " en " + response[id].affectation) + (response[id].utt ? " à l'UTT" : ""));
+            }
+          }
+        }
+        html = "";
+        if (valid.length > 0) {
+          html += '<h4 class="lo07-green">{$etudiant->getPrenom()} {$etudiant->getNom()} a validé</h4><ul>';
+          for (var id in valid) {
+            html += '<li>' + valid[id] + '</li>';
+          }
+          html += '</ul>'
+        }
+        if (needed.length > 0) {
+          html += '<h4 class="lo07-red">Il manque</h4><ul>';
+          for (var id in needed) {
+            html += '<li>' + needed[id] + '</li>';
+          }
+          html += '</ul>';
+        }
+        $("#lo07-reglement-result").html(html);
+      };
 
 
       refreshList();
@@ -381,7 +455,8 @@ else {
     "name" => "numero_etudiant",
     "label" => "Numéro étudiant",
     "list" => array(),
-    "fullwidth" => true
+    "fullwidth" => true,
+    "associative" => true
   ));
   $inputNomCursus = Components::text(array(
     "name" => "nom",
@@ -409,7 +484,7 @@ else {
       </div>
     </div>
 
-    <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top lo07-card-add" id="lo07-cursus-card">
+    <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--6-col-tablet mdl-cell--top lo07-card-add" id="lo07-cursus-card">
       <div class="lo07-card-title">
         Ajouter un cursus
       </div>
@@ -537,6 +612,7 @@ else {
                 if (cursusEl) {
                   cursusEl.parentElement.removeChild(cursusEl);
                 }
+                refreshList();
                 swal("Supprimé !", "Le cursus a bien été supprimé de la liste.", "success");
               }
             },
@@ -569,7 +645,7 @@ else {
               form.setAttribute('action', form.getAttribute('action').replace(/=add/, '=edit'))
               var cursus = result.response;
               updateInput(form.id, cursus.id);
-              updateInput(form.numero_etudiant, cursus.numero_etudiant);
+              updateInput(form.numero_etudiant_selectLabel, cursus.numero_etudiant);
               updateInput(form.nom, cursus.nom);
               form.id.setAttribute('readonly', 'readonly');
             }
@@ -592,7 +668,7 @@ else {
         var form = $('#lo07-form-add')[0];
         form.setAttribute('action', form.getAttribute('action').replace(/=edit/, '=add'))
         updateInput(form.id, '');
-        updateInput(form.numero_etudiant, '');
+        updateInput(form.numero_etudiant_selectLabel, '');
         updateInput(form.nom, '');
         form.id.removeAttribute('readonly');
         return false;
@@ -614,7 +690,7 @@ else {
               for (var id in result.response) {
                 list[result.response[id].numero] = result.response[id].numero + ' ' + result.response[id].prenom + ' ' + result.response[id].nom;
               }
-              updateSelect(form.numero_etudiant, list, search.length > 0);
+              updateSelect(form, 'numero_etudiant', list, search.length > 0);
             }
           },
           error: function(res) {
@@ -639,9 +715,11 @@ else {
 
       var importResponse = function(response, error) {
         if (error) {
+          swal("Oups...", error, "error");
           console.error(error);
         }
         else {
+          swal("Cursus importé !", response, "success");
           refreshList();
         }
       };

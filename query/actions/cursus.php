@@ -108,6 +108,12 @@ CSV;
       exit;
     }
 
+    else if ($action == "check") {
+      require_once '../classes/Reglement.class.php';
+      $reglement = Reglement::createFromID($_POST['reglement']);
+      $result['response'] = $reglement->checkCursus($cursus);
+    }
+
     else {
       $result['error'] = "Unknown action";
     }
@@ -209,11 +215,16 @@ CSV;
         }
         if ($result['error'] == null) {
           $etudiant = null;
+          $alreadyExists = array();
           if (!Etudiant::exists($etudiantArray['numero'])) {
             $etudiant = Etudiant::createEtudiant($etudiantArray['numero'], $etudiantArray['nom'], $etudiantArray['prenom'], $etudiantArray['admission'], $etudiantArray['filiere']);
           }
           else {
             $etudiant = Etudiant::createFromID($etudiantArray['numero']);
+            $etudiant->setNom($etudiantArray['nom']);
+            $etudiant->setPrenom($etudiantArray['prenom']);
+            $etudiant->setAdmission($etudiantArray['admission']);
+            $etudiant->setFiliere($etudiantArray['filiere']);
           }
           $cursus = Cursus::createCursus("Import CSV", $etudiant->getNumero());
           foreach ($elements as $key => $elementArray) {
@@ -223,13 +234,17 @@ CSV;
             }
             else {
               $element = Element::createFromSigle($elementArray['sigle']);
+              $element->setCategorie($elementArray['categorie']);
+              $element->setAffectation($elementArray['affectation']);
+              $element->setUtt(strtoupper($elementArray['utt']) == "Y");
+              array_push($alreadyExists, $element->getSigle());
             }
             Cursus_Element::createCursusElement($cursus->getId(), $element->getId(), $elementArray['sem_seq'], $elementArray['sem_label'], strtoupper($elementArray['profil']) == "Y", $elementArray['credit'], $elementArray['resultat'])->export();
           }
-          $result['response'] = "OK";
-        }
-        else {
-          $result['error'] = "Aucun label n'a été définit dans le règlement";
+          $result['response'] = "";
+          if (count($alreadyExists) > 0) {
+            $result['response'] .= "Les éléments de formation suivants existaient déjà et ont été actualisés : " . implode(', ', $alreadyExists);
+          }
         }
       }
       else {

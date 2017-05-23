@@ -60,7 +60,7 @@ echo <<<HTML
     </div>
   </div>
 
-  <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top lo07-card-add" id="lo07-element-card">
+  <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--6-col-tablet mdl-cell--top lo07-card-add" id="lo07-element-card">
     <div class="lo07-card-title">
       Ajouter un élément
     </div>
@@ -201,7 +201,7 @@ echo <<<HTML
             updateInput(form.id, element.id);
             updateInput(form.sigle, element.sigle);
             updateInput(form.categorie, element.categorie);
-            updateInput(form.affectation, element.affectation);
+            updateInput(form.affectation_selectLabel, element.affectation);
             // updateInput(form.utt, element.utt);
             if (element.utt && element.utt !== "0") form.utt.parentElement.MaterialCheckbox.check();
             else form.utt.parentElement.MaterialCheckbox.uncheck();
@@ -228,7 +228,7 @@ echo <<<HTML
       updateInput(form.id, '');
       updateInput(form.sigle, '');
       updateInput(form.categorie, '');
-      updateInput(form.affectation, '');
+      updateInput(form.affectation_selectLabel, '');
       form.utt.parentElement.MaterialCheckbox.check();
       form.id.removeAttribute('readonly');
       return false;

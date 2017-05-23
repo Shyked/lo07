@@ -115,11 +115,11 @@ SQL
   }
   
   public function setCategorie($categorie) {
-    $this->set('categorie', $categorie);
+    $this->set('categorie', strtoupper($categorie));
   }
   
   public function setAffectation($affectation) {
-    $this->set('affectation', $affectation);
+    $this->set('affectation', strtoupper($affectation));
   }
   
   public function setUtt($utt) {
@@ -179,6 +179,8 @@ SQL
   }
 
   public static function createElement($sigle, $categorie, $affectation, $utt) {
+    $categorie = strtoupper($categorie);
+    $affectation = strtoupper($affectation);
     global $pdo;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL

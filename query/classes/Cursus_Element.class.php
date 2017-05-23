@@ -202,10 +202,10 @@ SQL
     $class = __CLASS__;
     $where = $id_cursus ? 'WHERE id_cursus = :id_cursus' : '';
     $stmt = myPDO::getInstance()->prepare(<<<SQL
-      SELECT *
-      FROM {$class}
+      SELECT ce.*
+      FROM {$class} ce JOIN Element e ON (ce.id_element = e.id)
       {$where}
-      ORDER BY id_cursus, sem_seq, id_element, id
+      ORDER BY ce.id_cursus, ce.sem_seq, e.categorie, e.sigle, ce.id_element, ce.id
 SQL
     );
     $stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);

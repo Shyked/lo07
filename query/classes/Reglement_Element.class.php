@@ -97,15 +97,15 @@ SQL
   }
 
   public function setAgregat($agregat) {
-    $this->set('agregat', $agregat);
+    $this->set('agregat', strtoupper($agregat));
   }
 
   public function setCategorie($categorie) {
-    $this->set('categorie', $categorie);
+    $this->set('categorie', strtoupper($categorie));
   }
 
   public function setAffectation($affectation) {
-    $this->set('affectation', $affectation);
+    $this->set('affectation', strtoupper($affectation));
   }
 
   public function setCredit($credit) {
@@ -164,7 +164,80 @@ SQL
     }
   }
 
+  public function checkCursus($cursus, $elementsArray) {
+    if ($this->agregat == "SUM" || $this->agregat == "EXIST") {
+      // Parse
+      $utt = false;
+      $categorie = array();
+
+      $categoriesStr = $this->categorie;
+      if (preg_match('/UTT\(.*\)/', $categoriesStr)) {
+        $utt = true;
+        $categoriesStr = preg_replace("/UTT\((.*)\)/", "$1", $categoriesStr);
+      }
+      $categories = explode('+', $categoriesStr);
+
+      // Check
+      $credits = 0;
+      $exists = false;
+      foreach ($elementsArray as $key => $elementArray) {
+        if (
+            ( // Check categorie
+              in_array($elementArray['element']['categorie'], $categories)
+              && ( // Check affectation
+                $this->affectation == "UTT"
+                || $this->affectation == ""
+                || (
+                  $elementArray['element']['affectation'] == $this->affectation
+                  && $elementArray['profil']
+                )
+              )
+            )
+            || in_array('ALL', $categories)
+          ) {
+          $credits += $elementArray['credit'];
+        $exists = true;
+        }
+      }
+      if ($this->agregat == "SUM") {
+        return array(
+          "agregat" => $this->agregat,
+          "credits" => $credits,
+          "creditsNeeded" => $this->credit,
+          "categories" => $categories,
+          "affectation" => $this->affectation,
+          "utt" => $utt
+        );
+      }
+      else if ($this->agregat == "EXIST") {
+        return array(
+          "agregat" => $this->agregat,
+          "exists" => $exists,
+          "categories" => $categories,
+          "affectation" => $this->affectation,
+          "utt" => $utt
+        );
+      }
+      /*if ($credits < $this->credit) {
+        return array(
+          'valid' => false,
+          'msg' => "Il vous manque " . ($this->credit - $credits) . " crédits sur " . $this->credit . " " . (in_array('ALL', $categories) ? "en tout" : "de " . implode("+", $categories) . " en " . $this->affectation) . ($utt ? " à l'UTT" : "") . "."
+        );
+      }
+      else {
+        return array(
+          'valid' => true,
+          'msg' => "Vous avez " . ($credits) . " crédits sur " . $this->credit . " " . (in_array('ALL', $categories) ? "en tout" : "de " . implode("+", $categories) . " en " . $this->affectation) . ($utt ? " à l'UTT" : "") . "."
+        );
+      }*/
+    }
+    else throw Exception("Agregat {$this->agregat} inconnu pour {$this->id_regle}");
+  }
+
   public static function createReglementElement($id_reglement, $id_regle, $agregat, $categorie, $affectation, $credit) {
+    $agregat = strtoupper($agregat);
+    $categorie = strtoupper($categorie);
+    $affectation = strtoupper($affectation);
     global $pdo;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
