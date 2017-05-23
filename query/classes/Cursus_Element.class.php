@@ -24,11 +24,11 @@ class Cursus_Element {
 
 
   public static function createFromID($id) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
       SELECT *
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       WHERE id = :id
 SQL
     );
@@ -43,11 +43,11 @@ SQL
   }
 
   public static function exists($id) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
       SELECT id
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       WHERE id = :id
 SQL
     );
@@ -126,10 +126,10 @@ SQL
   }
 
   private function set($attr, $value) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      UPDATE {$class} SET {$attr} = :value WHERE id = :id
+      UPDATE {$db_prefix}{$class} SET {$attr} = :value WHERE id = :id
 SQL
 );
     $stmt->execute(array(
@@ -146,11 +146,11 @@ SQL
 
 
   public function delete() {
-    global $pdo;
+    global $pdo, $db_prefix;
     $this->deleteDependencies();
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      DELETE FROM {$class} WHERE id = :id
+      DELETE FROM {$db_prefix}{$class} WHERE id = :id
 SQL
 );
     $stmt->execute(array(
@@ -159,10 +159,11 @@ SQL
   }
   
   public function deleteDependencies() {
+    global $pdo, $db_prefix;
     foreach (self::$dependencies as $class => $attr) {
-      $stmt = myPDO::getInstance()->prepare(<<<SQL
+      $stmt = $pdo->prepare(<<<SQL
         SELECT *
-        FROM {$class}
+        FROM {$db_prefix}{$class}
         WHERE {$attr} = :id
 SQL
       );
@@ -178,10 +179,10 @@ SQL
   }
 
   public static function createCursusElement($id_cursus, $id_element, $sem_seq, $sem_label, $profil, $credit, $resultat) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      INSERT INTO {$class} (id_cursus, id_element, sem_seq, sem_label, profil, credit, resultat)
+      INSERT INTO {$db_prefix}{$class} (id_cursus, id_element, sem_seq, sem_label, profil, credit, resultat)
       VALUES (:id_cursus, :id_element, :sem_seq, :sem_label, :profil, :credit, :resultat)
 SQL
     );
@@ -199,11 +200,12 @@ SQL
   
 
   public static function getAll($id_cursus = null) {
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $where = $id_cursus ? 'WHERE id_cursus = :id_cursus' : '';
-    $stmt = myPDO::getInstance()->prepare(<<<SQL
+    $stmt = $pdo->prepare(<<<SQL
       SELECT ce.*
-      FROM {$class} ce JOIN Element e ON (ce.id_element = e.id)
+      FROM {$db_prefix}{$class} ce JOIN {$db_prefix}Element e ON (ce.id_element = e.id)
       {$where}
       ORDER BY ce.id_cursus, ce.sem_seq, e.categorie, e.sigle, ce.id_element, ce.id
 SQL

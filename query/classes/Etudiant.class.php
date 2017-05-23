@@ -28,11 +28,11 @@ class Etudiant {
 	 * @return Etudiant L'étudiant à qui appartient l'ID renseigné
 	 */
 	public static function createFromID($numero) {
-		global $pdo;
+		global $pdo, $db_prefix;
 		$class = __CLASS__;
   	$stmt = $pdo->prepare(<<<SQL
   		SELECT *
-  		FROM {$class}
+  		FROM {$db_prefix}{$class}
 			WHERE numero = :numero
 SQL
   	);
@@ -47,11 +47,11 @@ SQL
  	}
 
  	public static function exists($numero) {
- 		global $pdo;
+ 		global $pdo, $db_prefix;
  		$class = __CLASS__;
  		$stmt = $pdo->prepare(<<<SQL
  			SELECT numero
- 			FROM {$class}
+ 			FROM {$db_prefix}{$class}
  			WHERE numero = :numero
 SQL
 		);
@@ -83,7 +83,8 @@ SQL
 	}
 
 	public function getCursus() {
-		$stmt = myPDO::getInstance()->prepare(<<<SQL
+    global $pdo, $db_prefix;
+		$stmt = $pdo->prepare(<<<SQL
       SELECT *
       FROM cursus
       WHERE numero_etudiant = :numero
@@ -115,10 +116,10 @@ SQL
 	}
 
 	private function set($attr, $value) {
-		global $pdo;
+		global $pdo, $db_prefix;
 		$class = __CLASS__;
 		$stmt = $pdo->prepare(<<<SQL
-			UPDATE {$class} SET {$attr} = :value WHERE numero = :numero
+			UPDATE {$db_prefix}{$class} SET {$attr} = :value WHERE numero = :numero
 SQL
 );
 		$stmt->execute(array(
@@ -135,11 +136,11 @@ SQL
 
 
 	public function delete() {
-		global $pdo;
+		global $pdo, $db_prefix;
 		$this->deleteDependencies();
 		$class = __CLASS__;
 		$stmt = $pdo->prepare(<<<SQL
-			DELETE FROM {$class} WHERE numero = :numero
+			DELETE FROM {$db_prefix}{$class} WHERE numero = :numero
 SQL
 );
 		$stmt->execute(array(
@@ -148,10 +149,11 @@ SQL
 	}
 	
 	public function deleteDependencies() {
+    global $pdo, $db_prefix;
 		foreach (self::$dependencies as $class => $attr) {
-			$stmt = myPDO::getInstance()->prepare(<<<SQL
+			$stmt = $pdo->prepare(<<<SQL
 	      SELECT *
-	      FROM {$class}
+	      FROM {$db_prefix}{$class}
 	      WHERE {$attr} = :numero
 SQL
 	    );
@@ -180,10 +182,10 @@ SQL
 	 * @return Etudiant Une instance de l'Etudiant insérée
 	 */
 	public static function createEtudiant($numero, $nom, $prenom, $admission, $filiere) {
-		global $pdo;
+		global $pdo, $db_prefix;
 		$class = __CLASS__;
 		$stmt = $pdo->prepare(<<<SQL
-			INSERT INTO {$class} (numero, nom, prenom, admission, filiere)
+			INSERT INTO {$db_prefix}{$class} (numero, nom, prenom, admission, filiere)
 			VALUES (:numero, :nom, :prenom, :admission, :filiere)
 SQL
 		);
@@ -205,10 +207,11 @@ SQL
 	 * @return array Tableau de Etudiant
 	 */
 	public static function getAll() {
+    global $pdo, $db_prefix;
 		$class = __CLASS__;
-		$stmt = myPDO::getInstance()->prepare(<<<SQL
+		$stmt = $pdo->prepare(<<<SQL
       SELECT *
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       ORDER BY numero
 SQL
     );
@@ -218,6 +221,7 @@ SQL
 	}
 
 	public static function search($q) {
+    global $pdo, $db_prefix;
 		$qArray = explode(' ', $q);
 		$qSQL = '';
 		foreach ($qArray as $key => $word) {
@@ -229,9 +233,9 @@ SQL;
 		}
 		$qSQL = preg_replace('/AND /', '', $qSQL);
 		$class = __CLASS__;
-		$stmt = myPDO::getInstance()->prepare(<<<SQL
+		$stmt = $pdo->prepare(<<<SQL
       SELECT *
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       WHERE {$qSQL}
       ORDER BY numero
       LIMIT 10;

@@ -200,7 +200,7 @@ echo <<<HTML
             var element = result.response;
             updateInput(form.id, element.id);
             updateInput(form.sigle, element.sigle);
-            updateInput(form.categorie, element.categorie);
+            updateInput(form.categorie_selectLabel, element.categorie);
             updateInput(form.affectation_selectLabel, element.affectation);
             // updateInput(form.utt, element.utt);
             if (element.utt && element.utt !== "0") form.utt.parentElement.MaterialCheckbox.check();
@@ -227,7 +227,7 @@ echo <<<HTML
       form.setAttribute('action', form.getAttribute('action').replace(/=edit/, '=add'))
       updateInput(form.id, '');
       updateInput(form.sigle, '');
-      updateInput(form.categorie, '');
+      updateInput(form.categorie_selectLabel, '');
       updateInput(form.affectation_selectLabel, '');
       form.utt.parentElement.MaterialCheckbox.check();
       form.id.removeAttribute('readonly');

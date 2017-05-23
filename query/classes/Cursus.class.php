@@ -16,11 +16,11 @@ class Cursus {
 
 
   public static function createFromID($id) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
       SELECT *
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       WHERE id = :id
 SQL
     );
@@ -35,11 +35,11 @@ SQL
   }
 
   public static function exists($id) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
       SELECT id
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       WHERE id = :id
 SQL
     );
@@ -75,10 +75,10 @@ SQL
   }
 
   private function set($attr, $value) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      UPDATE {$class} SET {$attr} = :value WHERE id = :id
+      UPDATE {$db_prefix}{$class} SET {$attr} = :value WHERE id = :id
 SQL
 );
     $stmt->execute(array(
@@ -95,11 +95,11 @@ SQL
 
 
   public function delete() {
-    global $pdo;
+    global $pdo, $db_prefix;
     $this->deleteDependencies();
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      DELETE FROM {$class} WHERE id = :id
+      DELETE FROM {$db_prefix}{$class} WHERE id = :id
 SQL
 );
     $stmt->execute(array(
@@ -108,10 +108,11 @@ SQL
   }
   
   public function deleteDependencies() {
+    global $pdo, $db_prefix;
     foreach (self::$dependencies as $class => $attr) {
-      $stmt = myPDO::getInstance()->prepare(<<<SQL
+      $stmt = $pdo->prepare(<<<SQL
         SELECT *
-        FROM {$class}
+        FROM {$db_prefix}{$class}
         WHERE {$attr} = :id
 SQL
       );
@@ -127,10 +128,10 @@ SQL
   }
 
   public static function createCursus($nom, $numero_etudiant) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      INSERT INTO {$class} (nom, numero_etudiant)
+      INSERT INTO {$db_prefix}{$class} (nom, numero_etudiant)
       VALUES (:nom, :numero_etudiant)
 SQL
     );
@@ -150,9 +151,9 @@ SQL
    */
   public static function getAll() {
     $class = __CLASS__;
-    $stmt = myPDO::getInstance()->prepare(<<<SQL
+    $stmt = $pdo->prepare(<<<SQL
       SELECT *
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       ORDER BY numero_etudiant, id
 SQL
     );

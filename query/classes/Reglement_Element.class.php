@@ -22,11 +22,11 @@ class Reglement_Element {
 
 
   public static function createFromID($id) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
       SELECT *
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       WHERE id = :id
 SQL
     );
@@ -41,11 +41,11 @@ SQL
   }
 
   public static function exists($id) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
       SELECT id
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       WHERE id = :id
 SQL
     );
@@ -113,10 +113,10 @@ SQL
   }
 
   private function set($attr, $value) {
-    global $pdo;
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      UPDATE {$class} SET {$attr} = :value WHERE id = :id
+      UPDATE {$db_prefix}{$class} SET {$attr} = :value WHERE id = :id
 SQL
 );
     $stmt->execute(array(
@@ -133,11 +133,11 @@ SQL
 
 
   public function delete() {
-    global $pdo;
+    global $pdo, $db_prefix;
     $this->deleteDependencies();
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      DELETE FROM {$class} WHERE id = :id
+      DELETE FROM {$db_prefix}{$class} WHERE id = :id
 SQL
 );
     $stmt->execute(array(
@@ -146,10 +146,11 @@ SQL
   }
   
   public function deleteDependencies() {
+    global $pdo, $db_prefix;
     foreach (self::$dependencies as $class => $attr) {
-      $stmt = myPDO::getInstance()->prepare(<<<SQL
+      $stmt = $pdo->prepare(<<<SQL
         SELECT *
-        FROM {$class}
+        FROM {$db_prefix}{$class}
         WHERE {$attr} = :id
 SQL
       );
@@ -218,30 +219,18 @@ SQL
           "utt" => $utt
         );
       }
-      /*if ($credits < $this->credit) {
-        return array(
-          'valid' => false,
-          'msg' => "Il vous manque " . ($this->credit - $credits) . " crédits sur " . $this->credit . " " . (in_array('ALL', $categories) ? "en tout" : "de " . implode("+", $categories) . " en " . $this->affectation) . ($utt ? " à l'UTT" : "") . "."
-        );
-      }
-      else {
-        return array(
-          'valid' => true,
-          'msg' => "Vous avez " . ($credits) . " crédits sur " . $this->credit . " " . (in_array('ALL', $categories) ? "en tout" : "de " . implode("+", $categories) . " en " . $this->affectation) . ($utt ? " à l'UTT" : "") . "."
-        );
-      }*/
     }
     else throw Exception("Agregat {$this->agregat} inconnu pour {$this->id_regle}");
   }
 
   public static function createReglementElement($id_reglement, $id_regle, $agregat, $categorie, $affectation, $credit) {
+    global $pdo, $db_prefix;
     $agregat = strtoupper($agregat);
     $categorie = strtoupper($categorie);
     $affectation = strtoupper($affectation);
-    global $pdo;
     $class = __CLASS__;
     $stmt = $pdo->prepare(<<<SQL
-      INSERT INTO {$class} (id_reglement, id_regle, agregat, categorie, affectation, credit)
+      INSERT INTO {$db_prefix}{$class} (id_reglement, id_regle, agregat, categorie, affectation, credit)
       VALUES (:id_reglement, :id_regle, :agregat, :categorie, :affectation, :credit)
 SQL
     );
@@ -258,11 +247,12 @@ SQL
   
 
   public static function getAll($id_reglement = null) {
+    global $pdo, $db_prefix;
     $class = __CLASS__;
     $where = $id_reglement ? 'WHERE id_reglement = :id_reglement' : '';
-    $stmt = myPDO::getInstance()->prepare(<<<SQL
+    $stmt = $pdo->prepare(<<<SQL
       SELECT *
-      FROM {$class}
+      FROM {$db_prefix}{$class}
       {$where}
       ORDER BY id_reglement, id_regle, id
 SQL
