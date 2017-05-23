@@ -196,12 +196,12 @@
       label: 'Règlement',
       title: 'Gérer les règlement',
       icon: 'check'
-    },
+    }/*,
     tests: {
       label: 'Tests',
       title: 'Tests',
       icon: 'pets'
-    }
+    }*/
   });
 
 })();
