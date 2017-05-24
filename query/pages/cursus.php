@@ -93,7 +93,7 @@ if ($cursus) {
 
       <div class="lo07-card-body">
         <table class="lo07-list" id="lo07-cursus_element">
-
+          <tr><td class="lo07-text-center"><div class="mdl-spinner mdl-js-spinner is-active"></div></td></tr>
         </table>
         <button id="lo07-export-csv" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored lo07-button lo07-button-submit"><span>Exporter CSV</span></button>
       </div>
@@ -475,7 +475,7 @@ else {
 
       <div class="lo07-card-body">
         <table class="lo07-list" id="lo07-cursus">
-
+          <tr><td class="lo07-text-center"><div class="mdl-spinner mdl-js-spinner is-active"></div></td></tr>
         </table>
         <form action='query/actions/cursus.php?action=import' method="post" data-onresponse="importResponse" enctype="multipart/form-data" onsubmit="return false;">
           <input type="file" id="lo07-file" class="lo07-file" name="csv_import" />

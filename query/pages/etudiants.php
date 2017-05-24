@@ -51,7 +51,7 @@ echo <<<HTML
 
     <div class="lo07-card-body">
       <table class="lo07-list" id="lo07-etudiants">
-
+        <tr><td class="lo07-text-center"><div class="mdl-spinner mdl-js-spinner is-active"></div></td></tr>
       </table>
     </div>
   </div>

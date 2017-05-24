@@ -353,3 +353,7 @@ table.lo07-list table.lo07-list {
 .lo07-card-reglement .mdl-button.mdl-button--colored {
   background-color: #2ba94a;
 }
+
+.lo07-text-center {
+  text-align: center;
+}
