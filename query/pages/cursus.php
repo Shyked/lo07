@@ -1,5 +1,9 @@
 <?php
 
+
+/* Génère la page (frontend) de gestion des cursus */
+
+
 require_once "../classes/Components.class.php";
 require_once '../classes/Cursus.class.php';
 require_once '../classes/Etudiant.class.php';
@@ -7,8 +11,8 @@ require_once '../classes/Reglement.class.php';
 
 
 
+// Récupération du cursus si un 'id' est passé en paramètre GET
 $cursus = null;
-
 if (isset($_GET['id'])) {
   try {
     $cursus = Cursus::createFromID($_GET['id']);
@@ -18,9 +22,12 @@ if (isset($_GET['id'])) {
 }
 
 
+// Si un cursus en particulier est demandé, on affiche la page des détails d'un cursus
+// Sinon (deuxième partie du fichier) on affiche la liste des cursus
 if ($cursus) {
 
 
+  // Génération du code HTML pour les input
   $inputId = Components::hidden(array(
     "name" => "id"
   ));
@@ -84,6 +91,7 @@ if ($cursus) {
   ));
 
 
+  // Contenu HTML de la page
   echo <<<HTML
 
     <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
@@ -144,6 +152,7 @@ if ($cursus) {
 
 
     <script>
+    // Fonction appelée en retour de l'envoi du formulaire pour l'ajout ou l'édition
       var formResponse = function(response, error) {
         var notice = this.getElementsByClassName('lo07-form-notice')[0];
         if (error) {
@@ -158,6 +167,7 @@ if ($cursus) {
         }
       };
 
+      // Actualiser la zone d'affichage des éléments du cursus
       var refreshList = function() {
         $.ajax("./query/actions/cursus.php?id={$cursus->getId()}&action=get", {
           dataType: "json",
@@ -209,6 +219,7 @@ if ($cursus) {
         });
       };
 
+      // Récupération du code HTML pour afficher le passage à un nouveau semestre dans la liste
       var getSemRow = function(sem_seq, sem_label) {
         var tr = document.createElement('tr');
         tr.innerHTML = '\
@@ -217,8 +228,10 @@ if ($cursus) {
         return tr;
       };
 
+      // Récupération du code HTML pour une ligne représentant un élément de formation
       var getCursusElementRow = function(id, sem_seq, sem_label, sigle, categorie, affectation, utt, profil, credit, resultat) {
         var tr = document.createElement('tr');
+        // Génère une couleur en fonction de la catégorie
         var color = getColorFromString(categorie);
         tr.innerHTML = '\
           <td></td>\
@@ -237,7 +250,9 @@ if ($cursus) {
         return tr;
       };
 
+      // Lorsque l'on clique le bouton de suppression d'une ligne (c'est à dire d'un élément du cursus)
       var deleteObject = function(id) {
+        // On demande confirmation pour l'opération
         swal({
           title: "Êtes-vous sûr ?",
           text: "La suppression ne peut être annulée, il vous faudra saisir les informations à nouveau.",
@@ -247,6 +262,7 @@ if ($cursus) {
           confirmButtonText: "Oui, supprimer !",
           closeOnConfirm: false
         },
+        // Si oui
         function() {
           $.ajax("./query/actions/cursus.php?id={$cursus->getId()}&action=delete", {
             type: 'post',
@@ -257,6 +273,7 @@ if ($cursus) {
                 this.error();
               }
               else {
+                // Retrait de l'affichage l'élément dans la liste
                 var cursusElEl = document.getElementById(('lo07-cursus_element-' + id));
                 if (cursusElEl) {
                   cursusElEl.parentElement.removeChild(cursusElEl);
@@ -273,7 +290,9 @@ if ($cursus) {
         });
       };
 
+      // Lors du clic sur le bouton d'édition d'un élément du cursus
       var editObject = function(id) {
+        // On récupère les données de l'élément en question
         $.ajax("./query/actions/cursus.php?id={$cursus->getId()}&action=get", {
           type: 'post',
           data: 'id=' + id,
@@ -283,6 +302,7 @@ if ($cursus) {
               this.error();
             }
             else {
+              // On transforme la carte d'ajout en une carte d'édition
               var addCard = $('#lo07-cursus_element-card')[0];
               addCard.classList.add('lo07-card-edit');
               addCard.classList.remove('lo07-card-add');
@@ -292,6 +312,7 @@ if ($cursus) {
               cardTitle.html("Modifier un élément");
               var form = $('#lo07-form-add')[0];
               form.setAttribute('action', form.getAttribute('action').replace(/=add/, '=edit'));
+              // Puis on complète automatiquement les champs pour que les valeurs correspondent aux données de l'élément à éditer
               var cursus_element = result.response;
               updateInput(form.id, cursus_element.id);
               updateInput(form.element_search, '');
@@ -312,6 +333,7 @@ if ($cursus) {
         });
       };
 
+      // Reset le formulaire : Le repasse en mode ajout et vide tous les champs
       var resetForm = function() {
         var addCard = $('#lo07-cursus_element-card')[0];
         addCard.classList.remove('lo07-card-edit');
@@ -334,6 +356,7 @@ if ($cursus) {
         return false;
       };
 
+      // Effectue une recherche à partir de l'input element_search pour compléter le select avec le sigle recherché
       var fillSelect = function() {
         var form = $('#lo07-form-add')[0];
         var search = form.element_search.value;
@@ -360,36 +383,43 @@ if ($cursus) {
       };
 
 
+      // Lors d'un clic su le bouton d'export CSV, on accède à la "page" d'export qui returne le fichier CSV (ne recharge pas la page courante vu qu'il s'agit d'un fichier)
       $("#lo07-export-csv").click(function(e) {
         document.location.href = "./query/actions/cursus.php?id={$cursus->getId()}&action=export";
       });
 
 
 
+      // Validation du règlement
+      // Le serveur effectue les vérifications dans un premier temps et retourne une structure de données contenant, par exemple, le nombre de crédits cumulés pour un règle avec le nombre de crédits nécessaire pour la valider.
+      // La fonction ci-dessous génère le texte qui correspond à la structure de données retournée
       var formCheckResponse = function(response, error) {
-        console.log(response);
-        console.log(error);
-        var valid = [];
-        var needed = [];
+        var valid = []; // Contient la liste des phrases pour les règles validées
+        var needed = []; //                                              non validées
         for (var id in response) {
           if (response[id].agregat == "SUM") {
+            // SUM valide
             if (response[id].credits >= response[id].creditsNeeded) {
               valid.push("" + response[id].credits + " crédits sur " + response[id].creditsNeeded + " " + (response[id].categories.indexOf('ALL') != -1 ? "en tout" : "de " + response[id].categories.join("+") + " en " + response[id].affectation) + (response[id].utt ? " à l'UTT" : ""));
             }
+            // SUM non valide
             else {
               needed.push("" + (response[id].creditsNeeded - response[id].credits) + " crédits sur " + response[id].creditsNeeded + " " + (response[id].categories.indexOf('ALL') != -1 ? "en tout" : "de " + response[id].categories.join("+") + " en " + response[id].affectation) + (response[id].utt ? " à l'UTT" : ""));
             }
           }
-          else if (response[id].agregat == "EXISTS") {
+          else if (response[id].agregat == "EXIST") {
+            // EXIST valide
             if (response[id].exists) {
               valid.push("le " + (response[id].categories.indexOf('ALL') != -1 ? "tout" : response[id].categories.join("+") + " en " + response[id].affectation) + (response[id].utt ? " à l'UTT" : ""));
             }
+            // EXIST non valide
             else {
               needed.push("le " + (response[id].categories.indexOf('ALL') != -1 ? "tout" : response[id].categories.join("+") + " en " + response[id].affectation) + (response[id].utt ? " à l'UTT" : ""));
             }
           }
         }
         html = "";
+        // Affichage des règles validées
         if (valid.length > 0) {
           html += '<h4 class="lo07-green">{$etudiant->getPrenom()} {$etudiant->getNom()} a validé</h4><ul>';
           for (var id in valid) {
@@ -397,6 +427,7 @@ if ($cursus) {
           }
           html += '</ul>'
         }
+        // Affichage des règles non validées
         if (needed.length > 0) {
           html += '<h4 class="lo07-red">Il manque</h4><ul>';
           for (var id in needed) {
@@ -408,8 +439,10 @@ if ($cursus) {
       };
 
 
+      // On refresh la liste pour l'afficher au chargement de la page
       refreshList();
 
+      // Event listeners pour effectuer une recherche en fonction du sigle entré dans l'input
       $('#lo07-form-add')[0].element_search.addEventListener('change', fillSelect);
       $('#lo07-form-add')[0].element_search.addEventListener('keyup', fillSelect);
       fillSelect();
@@ -429,7 +462,7 @@ HTML;
 
 
 
-}
+} // Page pour l'affichage de la liste des cursus
 else {
 
 
@@ -700,19 +733,25 @@ else {
       };
 
 
+      // Le style du <input type="file" /> n'est pas customisable
+      // Pour le changer, il faut créer un fake button à côté qui, au clic, déclenchera le vrai input file
       var selectFile = function() {
         this.parentElement.getElementsByTagName('input')[0].click();
       };
 
+      // Pour tous les champs pour importer des fichiers...
       $('.lo07-js-file').each(function(id, element) {
+        // On relie la fonction du dessus à l'évènement click du bouton
         element.addEventListener('click', selectFile);
         var input = this.form.csv_import;
+        // Lorsque le contenu de l'input file a changé (on a délectionné un fichier)
         input.addEventListener('change', function() {
-          this.form.submit();
-          input.form.reset();
+          this.form.submit(); // On l'envoi directement au serveur
+          input.form.reset(); // On reset les champs pour que l'évènement "change" soit déclenché à nouveau, même si on sélectionne le même fichier deux fois de suite
         });
       });
 
+      // Dès que l'import est terminé
       var importResponse = function(response, error) {
         if (error) {
           swal("Oups...", error, "error");

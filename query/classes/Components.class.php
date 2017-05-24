@@ -2,6 +2,7 @@
 
 require_once '../myPDO.include.php';
 
+// Classe qui génère le code HTML des input en material design
 class Components {
 
 	private static $component_count = 0;

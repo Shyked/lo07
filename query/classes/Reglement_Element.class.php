@@ -190,7 +190,10 @@ SQL
                 $this->affectation == "UTT"
                 || $this->affectation == ""
                 || (
-                  $elementArray['element']['affectation'] == $this->affectation
+                  (
+                    $elementArray['element']['affectation'] == $this->affectation
+                    || $this->affectation == 'BR' && preg_match('/BR$/', $elementArray['element']['affectation'])
+                  )
                   && $elementArray['profil']
                 )
               )
