@@ -11,6 +11,20 @@ body {
   margin-top: 0.4em;
 }
 
+.lo07-header {
+  text-transform: uppercase;
+  background-color: #f5f5f5;
+}
+
+.pagemanager-currentMenu {
+  background-color: #ccc;
+}
+
+.lo07-header span {
+  font-weight: 800;
+  color: #444;
+}
+
 ul.lo07-no-dot {
   list-style-type: none;
 }
@@ -37,6 +51,7 @@ h6 {
 
 a {
   cursor: pointer;
+  text-decoration: initial;
 }
 
 .lo07-ripple-white {
@@ -91,15 +106,44 @@ a {
   vertical-align: bottom;
   font-weight: 300;
   transition-duration: 300ms;
+  overflow: hidden;
+  position: relative;
 }
 
-.lo07-card-add .lo07-card-title {
+.lo07-card-red .lo07-card-title, .lo07-card-add .lo07-card-title {
   background-color: #FF5252;
 }
 
-.lo07-card-edit .lo07-card-title {
+.lo07-card-yellow .lo07-card-title, .lo07-card-edit .lo07-card-title {
   background-color: #ffcc55;
   color: #222222;
+}
+
+.lo07-card-green .lo07-card-title, .lo07-card-reglement .lo07-card-title {
+  background-color: #2ba94a;
+}
+
+.lo07-card-with-icon {
+  overflow: hidden;
+  cursor: pointer;
+  transition-duration: 70ms;
+}
+
+.lo07-card-with-icon:hover {
+  box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12), 0px 2px 4px -1px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+}
+
+.lo07-card-with-icon .lo07-card-title {
+  padding-top: 4em;
+}
+
+.lo07-card-icon {
+  position: absolute;
+  font-size: 7em;
+  right: -0.2em;
+  bottom: -0.3em;
+  color: white;
 }
 
 .lo07-card-body {
@@ -304,10 +348,6 @@ table.lo07-list table.lo07-list {
 
 .lo07-file {
   display: none;
-}
-
-.lo07-card-reglement .lo07-card-title {
-  background-color: #2ba94a;
 }
 
 .lo07-card-reglement .mdl-button.mdl-button--colored {

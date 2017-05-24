@@ -20,7 +20,7 @@
           </a>\
         ";
       }
-      $("#pagemanager-menu").html(menuHtml);
+      $("#" + this.classPrefix + "menu").html(menuHtml);
       this._initCurrentPage();
       this._initEvents();
     };
@@ -73,6 +73,8 @@
     this.setCurrentPage = function(page, urlId, pushState) {
       console.info('Goto ' + page);
       if (this.pages[page]) {
+        var pagemanager = this;
+        
         // Change page URL
         var params = getURLParams();
         delete params[this.pageParam];
@@ -96,8 +98,13 @@
           titles[i].innerHTML = this.pages[page].title;
         }
 
+        // Highlight current page
+        $('#' + this.classPrefix + 'menu').children().each(function(id, tag) {
+          if (tag.getAttribute('href').indexOf(pagemanager.pageParam + "=" + pagemanager.currentPage) != -1) tag.classList.add(pagemanager.classPrefix + 'currentMenu');
+          else tag.classList.remove(pagemanager.classPrefix + 'currentMenu');
+        });
+
         $("#page-body")[0].classList.add(this.classPrefix + 'body-loading');
-        var pagemanager = this;
         var start = new Date();
 
         // Change body
