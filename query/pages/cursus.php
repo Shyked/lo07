@@ -72,7 +72,8 @@ if ($cursus) {
       'F',
       'ABS',
       'RES',
-      'ADM'
+      'ADM',
+      'EQU'
     )
   ));
 

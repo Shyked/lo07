@@ -484,11 +484,14 @@ else {
         });
       });
 
+      // Dès que l'import est terminé
       var importResponse = function(response, error) {
         if (error) {
+          swal("Oups...", error, "error");
           console.error(error);
         }
         else {
+          swal("Cursus importé !", response, "success");
           refreshList();
         }
       };
