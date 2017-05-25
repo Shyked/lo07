@@ -75,5 +75,32 @@ Lors d'un clic sur un lien, l'évènement est récupéré et annulé par le Page
 Le PageManager est aussi chargé de l'envoi des formulaires en Ajax.
 
 
-Material Design Lite
+Organisation de l'application
+-----------------------------
+
+L'organisation de l'application a été inspirée du modèle MVC (Modèle Vue Controlleur).
+
+Les fichiers nécessaires au navigateur pour utiliser l'API orientée ressource sont déclarés dans le `index.html`. Il s'agit de tous les fichiers situés en dehors du dossier `query`.
+
+Pour charger le contenu de la page (la vue), PageManager va appeler la page correspondante présente dans `query/pages`. Le script PHP va alors générer le code HTML, ainsi que le script JavaScript associé.  
+Ce code JavaScript va communiquer avec l'API en backend pour effectuer des actions, telles que l'ajout d'un nouvel élément, son édition, sa supression, ou encore la récupération d'une liste. Ces actions sont effectuées grâce à une requêtes vers les scripts situés dans `query/actions` (les contrôleurs). Les scripts sont divisés principaleent en fonction des modèles, puis divisés à l'intérieur en fonction de l'`action` passée en paramètre GET (get, add, edit, delete...).  
+Enfin, ces contrôleurs seront en relation avec les modèles présents dans `query/classes` pour pouvoir interagir avec la base de données.
+
+
+Librairies externes
 ------------
+
+>**Material Design Lite**  
+>Le design utilisé pour cette application provient de Material Design Lite qui et à disposition des éléments permettant d'adopter facilement le Material Design. L'application est basée sur le template [Dashboard](https://getmdl.io/templates/dashboard/index.html).
+
+>**GetMDL-Select**  
+>La librairie MDL ne propose pas de version en Material Design pour l'élément `select`. GetMDL-Select permet de contourner ce problème.
+
+>**JQuery**  
+>Framework aujourd'hui incontournable pour simplifier l'utilisation du JavaScript.
+
+>**JQuery Plugins**  
+>Offre la possibilité de surcharger l'envoi des formulaires pour qu'il se fasse en Ajax et qu'il ne recharge pas la page entière.
+
+>**Sweet Alert**  
+>Remplace la fonction `alert` par défaut, peu esthétique, par une version beaucoup plus visuelle et avancée. Utilisé en appelant la fonction `swal`.
