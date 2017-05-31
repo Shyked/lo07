@@ -89,7 +89,7 @@ HTML;
 		}
 		return <<<HTML
 			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select {$width}">
-			    <input class="mdl-textfield__input" type="text" name="{$name}" id="{$id}" value="{$default}" readonly tabIndex="-1"{$required} />
+			    <input class="mdl-textfield__input mdl-textfield__select" type="text" name="{$name}" id="{$id}" value="{$default}" readonly tabIndex="-1"{$required} />
 			    <label for="{$id}">
 			        <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
 			    </label>

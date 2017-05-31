@@ -75,6 +75,14 @@ a {
   margin-top: 2px;
 }
 
+.mdl-textfield__select {
+  cursor: pointer;
+}
+
+.getmdl-select .mdl-icon-toggle__label {
+  pointer-events: none;
+}
+
 .sweet-alert .sa-button-container .sa-confirm-button-container .confirm {
   background-color: #303F9F;
 }
