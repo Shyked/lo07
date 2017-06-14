@@ -491,7 +491,7 @@ else {
           console.error(error);
         }
         else {
-          swal("Cursus importé !", response, "success");
+          swal("Règlement importé !", 'Le règlement a été importé avec succès', "success");
           refreshList();
         }
       };

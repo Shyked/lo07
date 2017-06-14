@@ -79,10 +79,12 @@ try {
     // L'action 'edit' permet d'éditer un élément du cursus déjà existant
     else if ($action == 'edit') {
       if (requireParams('id', 'id_element', 'sem_seq', 'sem_label', 'credit', 'resultat')) {
+        $checkboxProfil = !$checkboxProfil;
         $cursus_element = Cursus_Element::createFromID($_POST['id']);
         $cursus_element->setIdElement($_POST['id_element']);
         $cursus_element->setSemSeq($_POST['sem_seq']);
         $cursus_element->setSemLabel($_POST['sem_label']);
+        $cursus_element->setProfil($checkboxProfil);
         $cursus_element->setCredit($_POST['credit']);
         $cursus_element->setResultat($_POST['resultat']);
         $result['response'] = $cursus_element->export();
