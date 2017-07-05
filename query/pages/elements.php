@@ -20,6 +20,7 @@ $inputCategorie = Components::select(array(
     "EC",
     "HT",
     "ME",
+    "CT",
     "ST",
     "SE",
     "HP",
